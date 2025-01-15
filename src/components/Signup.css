@@ -1,0 +1,84 @@
+.signup-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+  
+  .form-section {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  .form-section h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  input {
+    padding: 0.8rem;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .phone-input {
+    display: flex;
+    align-items: center;
+  }
+  
+  .phone-input .flag {
+    margin-right: 0.5rem;
+    font-size: 1.5rem;
+  }
+  
+  button {
+    padding: 1rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .image-section {
+    flex: 1;
+    background-color: #0056b3;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    
+  }
+  
+  .image-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .image-section img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1.5rem;
+  }
+  
