@@ -12,6 +12,7 @@ import api from '../api'; // Import the API
 const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otp, setOtp] = useState(null);
   const [errorMessages, setErrorMessages] = useState(null);
   const navigate = useNavigate();
   const application = localStorage.getItem('application') ? JSON.parse(localStorage.getItem('application')) : null;
@@ -57,7 +58,9 @@ const Login = () => {
     try {
       if (isAdmin && !isOtpSent) {
         // Initiate OTP
-        await api.user.initiateOTP({ email: values.email });
+        await api.user.initiateOTP({ email: values.email }).then((res) => {
+          setOtp(res.data.otp);
+        })
         setIsOtpSent(true);
       } else if (isAdmin && isOtpSent) {
         // Verify OTP
@@ -154,6 +157,7 @@ const Login = () => {
                         bordered={false}
                         style={{ backgroundColor: '#f5f5f5', padding: '10px', marginBottom: '10px' }}
                       />
+                      {otp && <p style={{ color: 'green' }}>OTP: {otp}</p>}
                       <ErrorMessage name="otp" component="div" className="error" style={{ color: 'red' }} />
                     </div>
                   )}
