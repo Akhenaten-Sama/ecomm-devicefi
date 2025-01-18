@@ -22,8 +22,9 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
+    localStorage.clear()
+    navigate("/login")
+
   };
 
   return (

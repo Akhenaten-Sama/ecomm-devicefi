@@ -4,13 +4,25 @@ import { Tabs, Skeleton } from "antd";
 import "./ItemsDisplay.css"; // CSS file for styling
 import api from "../../api"; // Import the API
 import emptyStateImage from "../../assets/empty.png"; // Import the empty state image
-const user = JSON.parse(localStorage.getItem("user"));
+import { useNavigate } from "react-router-dom";
+
 const ItemsDisplay = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [items, setItems] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const user = localStorage.getItem("user")? JSON.parse(localStorage.getItem("user")): null;
+const navigate = useNavigate();
+useEffect(()=>{
+  
+    if(!user?.id){
+     navigate("/login");
+    }
+  
+  
+},[user?.id])
+
 
   useEffect(() => {
     fetchCategories();

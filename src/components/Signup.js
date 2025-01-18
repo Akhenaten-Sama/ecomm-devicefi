@@ -106,6 +106,7 @@ console.log(errorMessage)
   return (
     <div className="signup-container">
       <img src={logo} alt="Logo" className="logo" />
+  
       <div className="form-section">
         <Formik
           initialValues={initialValues}

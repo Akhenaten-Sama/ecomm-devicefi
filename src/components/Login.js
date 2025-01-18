@@ -8,13 +8,13 @@ import onboardGirl from '../assets/onboardgirl.png';
 import logo from '../assets/logo.png';
 import api from '../api'; // Import the API
 
-const application = localStorage.getItem('application') ? JSON.parse(localStorage.getItem('application')) : null;
+
 const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [errorMessages, setErrorMessages] = useState(null);
   const navigate = useNavigate();
-
+  const application = localStorage.getItem('application') ? JSON.parse(localStorage.getItem('application')) : null;
   useEffect(() => {
     fetchUserProfile();
   }, []);
