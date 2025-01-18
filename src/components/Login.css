@@ -1,48 +1,31 @@
-.signup-container {
+.login-container {
   display: flex;
   flex-direction: row;
- height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   font-family: "Inter", sans-serif;
   position: relative;
-  
-}
-
-.error-message-signup {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border: 1px solid #f5c6cb;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  text-align: center;
 }
 
 .logo {
   position: absolute;
-  top: 10px;
-  left: 20px;
-  width: 80px;
+  top: 30px;
+  left: 30px;
+  width: 100px;
   padding: 1rem;
- 
 }
 
-.form-section {
+.form-section-login {
   flex: 1;
   padding: 1rem;
   display: flex;
   max-width: 80%;
-  margin-top: 50px;
-
+  margin-top: 30px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  overflow: scroll;
 }
 
-.form-div {
+form {
   width: 80%;
   padding-left: 5%;
   padding-right: 10%;
@@ -91,23 +74,8 @@ button:hover {
 .image-section {
   flex: 1;
   padding: 2rem;
-  max-height: 100vh;
+  height: 100vh;
   overflow: hidden;
-  background: url('../assets/background.png') no-repeat center center;
-  background-size: cover;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  overflow: hidden;
-  text-align: center;
-}
-
-.image-section h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: white;
 }
 
 .image-section img {

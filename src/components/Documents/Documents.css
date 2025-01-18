@@ -1,0 +1,43 @@
+.documents-container {
+  padding: 20px;
+  left: -400px;
+  font-family: Arial, sans-serif;
+  margin-top: 50px;
+}
+
+h1, h2 {
+  margin-bottom: 20px;
+}
+
+.document-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.document-item span {
+  flex: 1;
+}
+
+.document-item a {
+  margin-left: 10px;
+}
+
+.upload-section {
+  display: flex;
+  align-items: center;
+}
+
+.checkmark-icon {
+  color: green;
+  margin-left: 10px;
+}
+
+button {
+  margin-top: 20px;
+}

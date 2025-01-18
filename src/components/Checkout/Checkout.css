@@ -1,0 +1,141 @@
+/* CheckoutPage.css */
+
+.checkout-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f8fbff;
+    border-radius: 12px;
+    width: 70%;
+
+    height: 80%;
+    margin: 100px auto;
+    
+    font-family: "Inter", sans-serif;
+  }
+  
+  .success-icon {
+    color: #00c853;
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  
+  .success-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+  }
+  
+  .success-message {
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+    margin: 16px 0;
+  }
+  
+  .order-summary {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+  }
+  
+  .product-details {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .product-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    margin-right: 16px;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .product-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+  }
+  
+  .product-rating {
+    font-size: 14px;
+    color: #f9a825;
+    margin: 8px 0;
+  }
+  
+  .stars {
+    color: #ffd700;
+  }
+  
+  .product-description {
+    font-size: 14px;
+    color: #666;
+    margin: 8px 0;
+  }
+  
+  .product-colours {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .colour-indicator {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #000;
+    margin-left: 8px;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  
+  .pagination-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #dcdcdc;
+    margin: 0 4px;
+  }
+  
+  .pagination-dot.active {
+    background-color: #007bff;
+  }
+  
+  .checkout-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .checkout-button:hover {
+    background-color: #0056b3;
+  }
+  
