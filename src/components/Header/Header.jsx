@@ -36,6 +36,7 @@ const Header = () => {
         <button
           className="navbar-toggler"
           type="button"
+          style={{hover:"none"}}
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
           aria-controls="navbarNav"
@@ -64,12 +65,12 @@ const Header = () => {
               </a>
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
-                  <a className="dropdown-item" href="#" onClick={() => navigate("/categories/phones")}>
+                  <a className="dropdown-item" href="#" >
                     Phones
                   </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#" onClick={() => navigate("/categories/laptops")}>
+                  <a className="dropdown-item" href="#">
                     Laptops
                   </a>
                 </li>
