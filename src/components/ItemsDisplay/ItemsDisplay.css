@@ -1,69 +1,68 @@
 .items-display {
-    padding: 10px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: left;
-    margin-bottom: 20px;
-  }
-  
-  .category-tabs {
-    margin-bottom: 20px;
-  }
-  
-  .items-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0px;
-  }
-  
-  .item-card {
-    background-color: #fff;
-   
-    border-radius: 10px;
-    padding: 10px;
-  }
-  
-  .view-all-container {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .view-all-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .view-all-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  
+  padding: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #ffffff;
+}
 
-  .empty-state {
-    text-align: center;
-    padding: 50px 20px;
-  }
-  
-  .empty-state h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .empty-state p {
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-  .empty-state-image {
-    width: 200px;
-    margin-bottom: 20px;
-  }
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.category-tabs {
+  margin-bottom: 20px;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0px;
+}
+
+.item-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.view-all-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.view-all-btn {
+  padding: 10px 30px;
+  font-size: 16px;
+  background-color:white;
+  color:black;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.view-all-btn:hover {
+  background-color:"red";
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.empty-state h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.empty-state-image {
+  width: 200px;
+  margin-bottom: 20px;
+}

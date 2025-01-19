@@ -5,6 +5,9 @@
     background-image: url('../../assets/Footer.png');
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
   }
   
   .footer-container {
@@ -20,14 +23,14 @@
   }
   
   .footer-section h3 {
-    font-size: 18px;
+    font-size: 16px;
     margin-bottom: 10px;
   }
   
   .footer-section p,
   .footer-section ul,
   .footer-section li {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.5;
   }
   
@@ -43,9 +46,11 @@
   .email-input {
     display: flex;
     align-items: center;
-    background: white;
+    background: #0044cc;
     border-radius: 4px;
-    padding: 5px;
+    height: 54px;
+    width: 90%;
+    
   }
   
   .email-input input {
@@ -53,18 +58,28 @@
     padding: 10px;
     outline: none;
     flex: 1;
+    background: #0044cc;
+    color: white;
   }
   
+  div > h4{
+    font-size: 18px;
+  }
   .email-input button {
     background: transparent;
     border: none;
     cursor: pointer;
     font-size: 16px;
+    color: white;
   }
   
   .app-links img {
     max-width: 120px;
     margin: 5px 0;
+  }
+  .app-links{
+    display: flex;
+    gap: 10px;
   }
   
   .social-links i {
@@ -75,7 +90,11 @@
   
   .footer-bottom {
     text-align: center;
-    font-size: 14px;
+    font-size: 12px;
     margin-top: 20px;
   }
-  
+
+  .footer-logo {
+    width: 110px;
+    margin-bottom: 10px;
+  }

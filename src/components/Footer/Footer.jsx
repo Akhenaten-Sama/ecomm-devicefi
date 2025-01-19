@@ -1,12 +1,17 @@
 import React from "react";
 import "./Footer.css"; // Import the styles
+import logo from "../../assets/logo-alt.png"; // Import the logo
+import qrCode from "../../assets/qrcode.png"; // Import the QR code
+import googlePlay from "../../assets/googleplay.png"; // Import the Google Play image
+import appStore from "../../assets/appstore.png"; // Import the App Store image
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-section subscribe">
-          <h3>Subscribe</h3>
+          <img width='100px' src={logo} alt="Logo" className="footer-logo" />
+          <h4>Subscribe</h4>
           <p>Get 10% off your first order</p>
           <div className="email-input">
             <input type="email" placeholder="Enter your email" />
@@ -15,14 +20,14 @@ const Footer = () => {
         </div>
 
         <div className="footer-section support">
-          <h3>Support</h3>
+          <h4>Support</h4>
           <p>12, Abibolaji Drive, VI, Lagos</p>
           <p>devicefi@gmail.com</p>
           <p>+88015-88888-9999</p>
         </div>
 
         <div className="footer-section account">
-          <h3>Account</h3>
+          <h4>Account</h4>
           <ul>
             <li>My Account</li>
             <li>Login / Register</li>
@@ -33,7 +38,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-section quick-link">
-          <h3>Quick Link</h3>
+          <h4>Quick Link</h4>
           <ul>
             <li>Privacy Policy</li>
             <li>Terms Of Use</li>
@@ -43,12 +48,12 @@ const Footer = () => {
         </div>
 
         <div className="footer-section download">
-          <h3>Download App</h3>
+          <h4>Download App</h4>
           <div className="app-links">
-            <img src="/path-to-qr.png" alt="QR Code" />
-            <div>
-              <img src="/path-to-google-play.png" alt="Google Play" />
-              <img src="/path-to-app-store.png" alt="App Store" />
+            <img src={qrCode} alt="QR Code" />
+            <div style={{ display: "flex", flexDirection:"column", gap: "10px" }}>
+              <img src={googlePlay} alt="Google Play" />
+              <img src={appStore} alt="App Store" />
             </div>
           </div>
           <div className="social-links">

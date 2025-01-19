@@ -68,10 +68,9 @@ const Cart = () => {
     <div className="cart-container">
       {/* Table Header */}
       <div className="table-header">
-        <div>Product</div>
-        <div>Price</div>
-        <div>Quantity</div>
-        <div>Subtotal</div>
+        <div className="header-product">Product</div>
+        <div className="header-price">Price</div>
+        <div className="header-subtotal">Subtotal</div>
       </div>
 
       {/* Cart Items */}
@@ -79,28 +78,17 @@ const Cart = () => {
         {cartItems?.items?.map((item) => (
           <div key={item.id} className="cart-item">
             <div className="product-details">
-              <button className="remove-button" onClick={() => handleRemoveItem(item.id)}>&times;</button>
-              <img
-                src={item.DeviceCatalog.images[0]}
-                alt={item.DeviceCatalog.name}
-                className="product-image"
-              />
+              <div className="image-container">
+                <button className="remove-button" onClick={() => handleRemoveItem(item.id)}>&times;</button>
+                <img
+                  src={item.DeviceCatalog.images[0]}
+                  alt={item.DeviceCatalog.name}
+                  className="product-image"
+                />
+              </div>
               <span className="product-name">{item.DeviceCatalog.name}</span>
             </div>
             <div className="price">₦{item.DeviceCatalog.price}</div>
-            <div className="quantity">
-              <select
-                value={item.quantity}
-                onChange={(e) => handleUpdateQuantity(item.id, e.target.value)}
-                className="quantity-select"
-              >
-                {[...Array(10).keys()].map((i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-            </div>
             <div className="subtotal">₦{item.DeviceCatalog.price * item.quantity}</div>
           </div>
         ))}

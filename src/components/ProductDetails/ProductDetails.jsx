@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Skeleton, message } from "antd";
 import "./ProductDetails.css";
 import api from "../../api"; // Import the API
+import deliveryIcon from "../../assets/icon-delivery.svg"; // Import the delivery SVG
+import returnIcon from "../../assets/Icon-return.svg"; // Import the return SVG
 
 const ProductDetails = () => {
   const location = useLocation();
@@ -92,38 +94,41 @@ const ProductDetails = () => {
           <p className="description">
             {product.description}
           </p>
-          <div className="color-options">
-            <span>Colours:</span>
-            <div className="color-swatches">
-              {product?.colors?.map((color, index) => (
-                <div key={index} className={`color ${color.toLowerCase()}`}></div>
-              ))}
-            </div>
-          </div>
-          <div className="quantity-section">
+          <hr style={{color:"black", fontSize:"2px"}}/>
+          
+          {/* <div className="quantity-section">
             <button onClick={decreaseQuantity}>-</button>
-            <input type="number" value={quantity} readOnly />
+            <input style={{color:"black"}}type="number" value={quantity} readOnly />
             <button onClick={increaseQuantity}>+</button>
-          </div>
+          </div> */}
           <div className="delivery-info">
             <div className="delivery-option">
-              <span>🚚 Free Delivery</span>
-              <p>Enter your postal code for Delivery Availability</p>
-            </div>
-            <hr />
-            <div className="delivery-option">
-              <span>🔄 Return Delivery</span>
-              <p>
-                Free 30 Days Delivery Returns. <a href="/">Details</a>
-              </p>
-            </div>
+              <div>
+              <img src={deliveryIcon} alt="Free Delivery" />
+              <span>Free Delivery</span>
+              </div>
+           
+            <p style={{textDecoration:"underline"}}>Enter your postal code for Delivery Availability</p>
           </div>
-          <button className="add-to-cart" onClick={handleAddToCart}>Add to cart</button>
+          <hr />
+          <div className="delivery-option">
+            <div>
+            <img src={returnIcon} alt="Return Delivery" />
+            <span>Return Delivery</span>
+            </div>
+           
+            <p style={{textDecoration:"underline"}}>
+              Free 30 Days Delivery Returns. <a href="/">Details</a>
+            </p>
+          </div>
+          </div>
+         
         </div>
       </div>
 
       {/* Payment Method Section */}
       <div className="payment-method">
+        
         <h3>Choose a Payment Method</h3>
         <table>
           <thead>
@@ -147,7 +152,7 @@ const ProductDetails = () => {
               <td className="amount">₦200,000 / per month</td>
               <td>5%</td>
               <td>
-                <button className="add-to-cart">Add to cart</button>
+                <button onClick={handleAddToCart} className="add-to-cart">Add to cart</button>
               </td>
             </tr>
             <tr>
@@ -161,7 +166,7 @@ const ProductDetails = () => {
               <td className="amount">₦200,000 / per month</td>
               <td>4.5%</td>
               <td>
-                <button className="add-to-cart">Add to cart</button>
+                <button onClick={handleAddToCart} className="add-to-cart">Add to cart</button>
               </td>
             </tr>
           </tbody>

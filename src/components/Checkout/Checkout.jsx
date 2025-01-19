@@ -49,8 +49,8 @@ const Checkout = () => {
       <p className="success-message">
         You have successfully ordered the item below
         <br />
-        View order details for shipping and installment payment date.
-        <br />
+        {/* View order details for shipping and installment payment date.
+        <br /> */}
         We are setting up your device - we will deliver to you within 48 hours
       </p>
       <div className="order-summary">
@@ -62,7 +62,7 @@ const Checkout = () => {
               <span className="stars">★★★★☆</span> (150 Reviews)
             </p>
             <p className="product-description">
-              Oppo Skin High quality vinyl with air channel adhesive for easy
+              {order?.OrderItems[0].DeviceCatalog?.name}'s  Skin High quality vinyl with air channel adhesive for easy
               bubble free install & mess free removal Pressure sensitive.
             </p>
             <p className="product-colours">

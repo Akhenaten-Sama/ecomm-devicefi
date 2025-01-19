@@ -13,35 +13,38 @@ const ItemDetails = ({ item, phone }) => {
   return (
     <div className="item-details-card">
       <img src={phone ? phone : altphone} alt={item.name} className="item-image" />
-      <h2>{item.name}</h2>
-      <h3 className="item-price">₦{item.price}</h3>
+      <div className="item-header">
+        <h3>{item.name}</h3>
+        <h4 className="item-price">₦{item.price}</h4>
+      </div>
 
       <div className="payment-options">
-        <table>
-          <thead>
-            <tr>
-              <th>Months</th>
-              <th>Payment</th>
-            </tr>
-          </thead>
-          <tbody>
-            {item.payment_plans.map((p) =>
-             <tr>
-             <td>{p.months}Month payment:</td>
-             <td>₦{p.monthly_payment}</td>
-           </tr> )}
-           
-           
-          </tbody>
-        </table>
+        <div className="payment-header">
+          <span>Months</span>
+          <span>Payments</span>
+        </div>
+        <hr />
+        {item.payment_plans.map((p, index) => (
+          <div key={index} >
+            <div className="payment-plan">
+            <span>{p.months} month payments:</span>
+             
+            <span >₦{p.monthly_payment}</span>
+            
+            </div>
+            {index < item.payment_plans.length - 1 && <hr />}
+          </div>
+        ))}
       </div>
 
       <div className="availability">
-        <span>Availability:</span>
-        <span className={item.status==="available"?`in-stock`:'not-in-stock'}>{item.status ==="available"? "In Stock" : "Out of Stock"}</span>
+        <span>Availability</span>
+        <span className={item.status === "available" ? "in-stock" : "not-in-stock"}>
+          {item.status === "available" ? "In Stock" : "Out of Stock"}
+        </span>
       </div>
 
-      <button className="place-order-btn" onClick={handlePlaceOrder}>Place Order</button>
+      <button className="place-order-btn" onClick={handlePlaceOrder}>View Product</button>
     </div>
   );
 };

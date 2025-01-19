@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Input, Button } from 'antd';
+import { Button } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
+import { Grid, Stack, InputLabel, FilledInput, FormHelperText } from '@mui/material';
 import './Login.css';
 import onboardGirl from '../assets/onboardgirl.png';
 import logo from '../assets/logo.png';
 import api from '../api'; // Import the API
-
 
 const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -16,6 +16,7 @@ const Login = () => {
   const [errorMessages, setErrorMessages] = useState(null);
   const navigate = useNavigate();
   const application = localStorage.getItem('application') ? JSON.parse(localStorage.getItem('application')) : null;
+
   useEffect(() => {
     fetchUserProfile();
   }, []);
@@ -102,81 +103,152 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="form-section-login">
-        <img src={logo} alt="Logo" className="logo" />
-        <h1>{isAdmin ? 'Admin Login' : 'User Login'}</h1>
-        <Button type="link" onClick={() => setIsAdmin(!isAdmin)}>
-          {isAdmin ? 'Switch to User Login' : 'Switch to Admin Login'}
-        </Button>
+    <div className="login-container container-fluid">
+      <div className="row">
+        <div className="col-md-6 form-section-login d-flex flex-column align-items-center justify-content-center">
+          <img src={logo} alt="Logo" className="logo mb-4" />
+          <h1 className="mb-4">{isAdmin ? 'Admin Login' : 'User Login'}</h1>
+          <div className="d-flex mb-4">
+            <Button
+              variant="text"
+              onClick={() => setIsAdmin(false)}
+              style={{ backgroundColor:"transparent", textDecoration: !isAdmin ? 'underline' : 'none', color: isAdmin ? "black":"", }}
+              className="me-3"
+            >
+              User Login
+            </Button>
+            <Button
+              variant="text"
+              onClick={() => setIsAdmin(true)}
+              style={{ backgroundColor:"transparent",textDecoration: isAdmin ? 'underline' : 'none', color: !isAdmin ? "black":"", }}
+            >
+              Admin Login
+            </Button>
+          </div>
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting, handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
-              <Field name="email">
-                {({ field }) => (
-                  <div className="form-group">
-                    <Input
-                      {...field}
-                      placeholder="Email Address"
-                      bordered={false}
-                      style={{ backgroundColor: '#f5f5f5', padding: '10px', marginBottom: '10px' }}
-                    />
-                    <ErrorMessage name="email" component="div" className="error" style={{ color: 'red' }} />
-                  </div>
-                )}
-              </Field>
-
-              {!isAdmin && (
-                <Field name="password">
-                  {({ field }) => (
-                    <div className="form-group">
-                      <Input.Password
-                        {...field}
-                        placeholder="Password"
-                        bordered={false}
-                        style={{ backgroundColor: '#f5f5f5', padding: '10px', marginBottom: '10px' }}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ values, errors, touched, handleBlur, handleChange, isSubmitting, handleSubmit }) => (
+              <form onSubmit={handleSubmit} className="form-width">
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel color="secondary" htmlFor="email-login">
+                        Email Address
+                      </InputLabel>
+                      <FilledInput
+                        id="email-login"
+                        type="email"
+                        
+                        variant='standard'
+                         disableUnderline={true}
+                        value={values.email}
+                        name="email"
+                        style={{border:"none", height:"45px"}}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                       
+                        fullWidth
+                        error={Boolean(touched.email && errors.email)}
+                        className="input-field"
                       />
-                      <ErrorMessage name="password" component="div" className="error" style={{ color: 'red' }} />
-                    </div>
-                  )}
-                </Field>
-              )}
+                      {touched.email && errors.email && (
+                        <FormHelperText error id="standard-weight-helper-text-email-login">
+                          {errors.email}
+                        </FormHelperText>
+                      )}
+                    </Stack>
+                  </Grid>
 
-              {isAdmin && isOtpSent && (
-                <Field name="otp">
-                  {({ field }) => (
-                    <div className="form-group">
-                      <Input
-                        {...field}
-                        placeholder="Enter OTP"
-                        bordered={false}
-                        style={{ backgroundColor: '#f5f5f5', padding: '10px', marginBottom: '10px' }}
-                      />
-                      {otp && <p style={{ color: 'green' }}>OTP: {otp}</p>}
-                      <ErrorMessage name="otp" component="div" className="error" style={{ color: 'red' }} />
-                    </div>
+                  {!isAdmin && (
+                    <Grid item xs={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="password-login">Password</InputLabel>
+                        <FilledInput
+                          fullWidth
+                          error={Boolean(touched.password && errors.password)}
+                          id="password-login"
+                          type="password"
+                          value={values.password}
+                          name="password"
+                          disableUnderline={true}
+                          onBlur={handleBlur}
+                          style={{border:"none", height:"45px"}}
+                          onChange={handleChange}
+                         
+                          className="input-field"
+                        />
+                        {touched.password && errors.password && (
+                          <FormHelperText error id="standard-weight-helper-text-password-login">
+                            {errors.password}
+                          </FormHelperText>
+                        )}
+                      </Stack>
+                    </Grid>
                   )}
-                </Field>
-              )}
 
-              <Button type="primary" htmlType="submit" loading={isSubmitting} disabled={isSubmitting}>
-                {isAdmin && !isOtpSent ? 'Continue' : 'Login'}
-              </Button>
-              {errorMessages && <div className="error-message-signup">{errorMessages}</div>}
-              <div className="login-link">
-                Sign Up Instead <Link to="/signup">SIGNUP</Link>
-              </div>
-            </form>
-          )}
-        </Formik>
-      </div>
-      <div className="image-section">
-        <img src={onboardGirl} alt="Onboarding" />
+                  {isAdmin && isOtpSent && (
+                    <Grid item xs={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="otp-login">OTP</InputLabel>
+                        <FilledInput
+                          fullWidth
+                          error={Boolean(touched.otp && errors.otp)}
+                          id="otp-login"
+                          type="text"
+                          value={values.otp}
+                          style={{border:"none", height:"45px"}}
+                          
+                          name="otp"
+                          onBlur={handleBlur}
+                          disableUnderline={true}
+                          onChange={handleChange}
+                          placeholder="Enter OTP"
+                          className="input-field"
+                        />
+                        {otp && <p className="text-success">OTP: {otp}</p>}
+                        {touched.otp && errors.otp && (
+                          <FormHelperText error id="standard-weight-helper-text-otp-login">
+                            {errors.otp}
+                          </FormHelperText>
+                        )}
+                      </Stack>
+                    </Grid>
+                  )}
+
+                  <Grid item xs={12} sx={{ mt: -1 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}></Stack>
+                  </Grid>
+                  {errors.submit && (
+                    <Grid item xs={12}>
+                      <FormHelperText error>{errors.submit}</FormHelperText>
+                    </Grid>
+                  )}
+                  <Grid item xs={12}>
+                    <Button
+                      disableElevation
+                      disabled={isSubmitting}
+                      fullWidth
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      className="submit-button"
+                    >
+                      {isAdmin && !isOtpSent ? 'Continue' : 'Login'}
+                    </Button>
+                  </Grid>
+                </Grid>
+              </form>
+            )}
+          </Formik>
+        </div>
+        <div style={{overflow:"hidden", position:"relative"}}className="col-md-6 image-section d-flex align-items-center justify-content-center">
+          <img style={{position:"absolute", bottom:"0px", width:"60%"}} src={onboardGirl} alt="Onboarding" className="img-fluid" />
+        </div>
       </div>
     </div>
   );
