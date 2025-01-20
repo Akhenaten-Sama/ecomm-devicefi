@@ -1,11 +1,9 @@
 .signup-container {
   display: flex;
   flex-direction: row;
- height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   font-family: "Inter", sans-serif;
   position: relative;
-  
 }
 
 .error-message-signup {
@@ -23,13 +21,14 @@
   position: absolute;
   top: 10px;
   left: 20px;
-  width: 80px;
+  width: 100px;
   padding: 1rem;
- 
+  margin-bottom: 20px;
 }
-.logo-inverse{
-  position:absolute;
-  top:10px;
+
+.logo-inverse {
+  position: absolute;
+  top: 10px;
   right: 730px;
   width: 40px;
 }
@@ -40,11 +39,9 @@
   display: flex;
   max-width: 80%;
   margin-top: 50px;
-
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   overflow: scroll;
 }
 
@@ -77,8 +74,8 @@ input {
 }
 
 button {
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
   background-color: #007bff;
   color: #fff;
   border: none;
@@ -97,7 +94,7 @@ button:hover {
 .image-section {
   flex: 1;
   padding: 2rem;
-  max-height: 100vh;
+  width: 50vw;
   overflow: hidden;
   background: url('../assets/background.png') no-repeat center center;
   background-size: cover;
@@ -117,7 +114,107 @@ button:hover {
 }
 
 .image-section img {
-  width: 450px;
+  width: 100%;
   height: auto;
   margin-top: 1.5rem;
+}
+
+.form-section-signup {
+  padding: 2rem;
+  width: 50vw;
+}
+
+.form-section-signup h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-width {
+  width: 100%;
+  max-width: 350px;
+  padding: 20px;
+  border-radius: 12px;
+  border: none;
+}
+
+.input-field {
+  background-color: #f5f5f5;
+  border: none;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: #fff;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+  }
+
+  .form-section-signup {
+    max-width: 100%;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .image-section {
+    padding: 1rem;
+    height: auto;
+    width: 100%;
+  }
+
+  .image-section img {
+    width: 100%;
+    height: auto;
+    margin-top: 1rem;
+  }
+
+  form {
+    width: 90%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 80px;
+  }
+
+  .form-section-signup {
+    padding: 0.5rem;
+  }
+
+  .form-section-signup h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  input {
+    padding: 0.6rem;
+    font-size: 0.875rem;
+  }
+
+  button {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
 }

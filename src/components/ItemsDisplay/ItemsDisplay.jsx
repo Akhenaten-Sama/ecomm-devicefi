@@ -15,11 +15,11 @@ const ItemsDisplay = () => {
   const user = localStorage.getItem("user")? JSON.parse(localStorage.getItem("user")): null;
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    if(!user?.id){
-      navigate("/login");
-    }
-  },[user?.id]);
+  // useEffect(()=>{
+  //   if(!user?.id){
+  //     navigate("/login");
+  //   }
+  // },[user?.id]);
 
   useEffect(() => {
     fetchCategories();
@@ -89,7 +89,7 @@ const ItemsDisplay = () => {
         <div className="items-grid">
           {displayedItems.map((item, index) => (
             <div key={index} className="item-card">
-              <ItemDetails item={item} phone={item.images[0]} />
+              <ItemDetails item={item}user={user}phone={item.images[0]} />
             </div>
           ))}
         </div>

@@ -30,6 +30,7 @@ export default class User {
     }
     
     updateProfile(payload) {
+      delete payload.email
       return this.client.put('/user/profile', payload)
     }
 

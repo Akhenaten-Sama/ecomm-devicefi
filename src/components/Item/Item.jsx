@@ -3,11 +3,16 @@ import { useNavigate } from "react-router-dom";
 import "./Item.css"; // Import the CSS for styling
 import altphone from "../../assets/phone.png"; // Import the phone image
 
-const ItemDetails = ({ item, phone }) => {
+const ItemDetails = ({ item, phone, user }) => {
   const navigate = useNavigate();
 
   const handlePlaceOrder = () => {
-    navigate(`/product?product_id=${item.id}`);
+    if(user){
+      navigate(`/product?product_id=${item.id}`);
+    }else{
+      navigate(`/login`);
+    }
+    
   };
 
   return (

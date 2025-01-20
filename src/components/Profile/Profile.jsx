@@ -1,295 +1,450 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Tabs, Row, Col, Select, Avatar, Card, Modal } from "antd";
-import { CameraOutlined, CopyOutlined } from "@ant-design/icons";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import {
+  Button,
+  FormGroup,
+  Label,
+  Input,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Form,
+  FormFeedback,
+  Container,
+  Row,
+  Col,
+} from "reactstrap";
+import background from "../../assets/profilebackground.jpeg";
+import profileImg from "../../assets/profile.jpg";
 import api from "../../api"; // Import the API
+import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Typography,
+  Avatar,
+  IconButton,
+  Paper,
+  Grid,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Header from "../Header/Header"; // Import Header
 import Footer from "../Footer/Footer"; // Import Footer
 import "./Profile.css";
-import background from "../../assets/profilebackground.jpeg";
 
-const { TabPane } = Tabs;
+const user = JSON.parse(localStorage.getItem("user"));
 
-const Profile = () => {
-  const [profile, setProfile] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
+const ProfileFormScreen = () => {
+  const [err, setErr] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
-    try {
-      const response = await api.user.fetchProfile();
-      setProfile(response.data.data.user);
-      form.setFieldsValue(response.data.data.user);
-    } catch (error) {
-      console.error("Error fetching profile:", error);
+    if (user?.login_counter === 0) {
+      setErr("Please change your password before continuing!");
     }
-  };
+  }, [user]);
 
-  const showModal = () => {
-    setIsModalVisible(true);
-    form.setFieldsValue(profile);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleUpdateProfile = async (values) => {
-    delete values.email; // Remove email from the payload
+  const handleEditProfile = async (values, { setErrors, setStatus, setSubmitting }) => {
     try {
+      localStorage.setItem("user", JSON.stringify({ ...user, ...values, login_counter: 1 }));
       await api.user.updateProfile(values);
-      fetchProfile();
-      setIsModalVisible(false);
-    } catch (error) {
-      console.error("Error updating profile:", error);
+      setIsModalOpen(false);
+      setStatus({ success: true });
+      setSubmitting(false);
+    } catch (err) {
+      console.error(err);
+      setStatus({ success: false });
+      setErrors({ submit: err.response.data.message });
+      setSubmitting(false);
     }
   };
-
-  if (!profile) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
       <Header />
-      <div style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#f5f5f5", padding: "20px" }}>
-        {/* Cover Section */}
-        <div
-          style={{
-            backgroundImage: `url(${background})`,
-            height: "300px",
-            position: "relative",
-            marginBottom: "30px",
-          }}
-        >
-        </div>
-
-        <Row  style={{ textAlign: "center",background:"white", boxShadow: "none", border: "1px solid #ddd" }} gutter={32}>
-          {/* Left Section */}
-          <Col span={8}>
-            <Card
-              style={{ textAlign: "center", boxShadow: "none", border: "1px solid #ddd" }}
-              bodyStyle={{ padding: "20px" }}
+      <div className="page-content">
+        <Container fluid>
+          <Box sx={{ maxWidth: 1200, margin: "auto", padding: 2 }}>
+            {/* Profile Details Section */}
+            <Paper
+              elevation={4}
+              sx={{
+                position: "relative",
+                borderRadius: 3,
+                overflow: "hidden",
+                marginBottom: 3,
+              }}
             >
-              {/* Profile Picture */}
+              <Box
+                sx={{
+                  height: 200,
+                  backgroundImage: `url(${background})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              ></Box>
               <Avatar
-                size={100}
-                src="https://via.placeholder.com/100"
-                style={{ marginBottom: "10px" }}
-              />
-              <Button
-                shape="circle"
-                icon={<CameraOutlined />}
-                style={{
+                alt="Profile Picture"
+                src={profileImg}
+                sx={{
+                  width: 100,
+                  height: 100,
                   position: "absolute",
-                  top: "140px",
-                  left: "90px",
-                  backgroundColor: "#fff",
-                  border: "none",
-                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  top: 150,
+                  left: "8%",
+                  transform: "translateX(-50%)",
+                  border: "4px solid white",
                 }}
               />
-              <h3 style={{ marginBottom: "5px" }}>{profile?.first_name} {profile?.last_name}</h3>
-              <p style={{ color: "#888" }}>{profile?.employment_details?.position || "N/A"}</p>
-
-              {/* Statistics */}
-              <div style={{ textAlign: "left", marginTop: "20px" }}>
-                <p>
-                 Email: <span style={{ color: "#fa541c" }}>{profile.email}</span>
-                </p>
-                
-              </div>
-
-              {/* Profile Link */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "10px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                }}
+              <Box sx={{ marginTop: 8, paddingBottom: 2, paddingLeft: "16px" }}>
+                <Typography variant="h4">
+                  {user.first_name} {user.last_name}
+                </Typography>
+                <Typography variant="subtitle1" color="textSecondary">
+                  {user.email}
+                </Typography>
+                <Typography variant="subtitle1" color="textSecondary">
+                  {user.phone_number}
+                </Typography>
+                <Typography variant="subtitle1" color="textSecondary">
+                  {user.address}
+                </Typography>
+              </Box>
+              <IconButton
+                aria-label="settings"
+                onClick={() => setIsModalOpen(true)}
+                sx={{ position: "absolute", top: 16, right: 16 }}
               >
-                <span>https://domain.com/user</span>
-                <CopyOutlined style={{ color: "#1890ff", cursor: "pointer" }} />
-              </div>
-            </Card>
-          </Col>
-
-          {/* Right Section */}
-          <Col span={16}>
-            <Tabs defaultActiveKey="1">
-              {/* Account Settings Tab */}
-              <TabPane tab="Account Settings" key="1">
-                <Form
-                  form={form}
-                  layout="vertical"
-                  style={{ marginTop: "20px" }}
-                  onFinish={handleUpdateProfile}
+                <MoreVertIcon style={{color:"white"}}color="action" />
+              </IconButton>
+            </Paper>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Paper elevation={4} sx={{ borderRadius: 3, padding: 3, marginBottom: 3 }}>
+                  <Typography variant="h5" gutterBottom>
+                    Additional Details
+                  </Typography>
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Employment Status:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      {user.employment_status}
+                    </Typography>
+                  </Box>
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Income Source:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      {user.income_details?.income_source}
+                    </Typography>
+                  </Box>
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Monthly Income:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      ₦{user.income_details?.monthly_income}
+                    </Typography>
+                  </Box>
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Additional Income:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      ₦{user.income_details?.additional_income}
+                    </Typography>
+                  </Box>
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Paper elevation={4} sx={{ borderRadius: 3, padding: 3, marginBottom: 3 }}>
+                  <Typography variant="h5" gutterBottom>
+                    Status
+                  </Typography>
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Onboarding Status:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      {user.onboarding_status}
+                    </Typography>
+                  </Box>
+                  {/* <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Account Status:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      {user.account_status}
+                    </Typography>
+                  </Box> */}
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>KYC Status:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      {user.kyc_status}
+                    </Typography>
+                  </Box>
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Credit Approved:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      {user.credit_approved ? "Yes" : "No"}
+                    </Typography>
+                  </Box>
+                  <Box className="detail-item">
+                    <Typography variant="body1" className="detail-field">
+                      <strong>Credit Limit:</strong>
+                    </Typography>
+                    <Typography variant="body1" className="detail-value">
+                      ₦{user.credit_limit}
+                    </Typography>
+                  </Box>
+                </Paper>
+              </Grid>
+            </Grid>
+            {/* Edit Profile Modal */}
+            <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(false)} centered className="custom-modal">
+              <ModalHeader toggle={() => setIsModalOpen(false)}>Edit Profile</ModalHeader>
+              <ModalBody>
+                <Formik
+                  initialValues={{
+                    first_name: user?.first_name || "",
+                    last_name: user?.last_name || "",
+                    email: user?.email || "",
+                    phone_number: user?.phone_number || "",
+                    address: user?.address || "",
+                    employment_status: user?.employment_status || "",
+                    income_source: user?.income_details?.income_source || "",
+                    monthly_income: user?.income_details?.monthly_income || "",
+                    additional_income: user?.income_details?.additional_income || "",
+                  }}
+                  validationSchema={Yup.object().shape({
+                    first_name: Yup.string().max(255).required("First Name is required"),
+                    last_name: Yup.string().max(255).required("Last Name is required"),
+                    email: Yup.string()
+                      .email("Must be a valid email")
+                      .max(255)
+                      .required("Email is required"),
+                    phone_number: Yup.string().max(15).required("Phone Number is required"),
+                    address: Yup.string().max(255).required("Address is required"),
+                    employment_status: Yup.string().max(255).required("Employment Status is required"),
+                    income_source: Yup.string().max(255).required("Income Source is required"),
+                    monthly_income: Yup.number().required("Monthly Income is required"),
+                    additional_income: Yup.number().required("Additional Income is required"),
+                  })}
+                  onSubmit={handleEditProfile}
                 >
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item name="first_name" label="First Name">
-                        <Input placeholder="First Name" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item name="last_name" label="Last Name">
-                        <Input placeholder="Last Name" />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item name="phone_number" label="Phone Number">
-                        <Input placeholder="Phone Number" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item name="email" label="Email Address">
-                        <Input placeholder="Email Address" readOnly />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item name="city" label="City">
-                        <Input placeholder="City" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item name="country" label="Country">
-                        <Input placeholder="Country" />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item name="state" label="State">
-                        <Input placeholder="State" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item name="address" label="Address">
-                        <Input placeholder="Address" />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  <Form.Item name="employment_status" label="Employment Status">
-                    <Select>
-                      <Select.Option value="employed">Employed</Select.Option>
-                      <Select.Option value="unemployed">Unemployed</Select.Option>
-                    </Select>
-                  </Form.Item>
-                  {form.getFieldValue("employment_status") === "employed" && (
-                    <>
-                      <Form.Item name={["employment_details", "employer_name"]} label="Employer Name">
-                        <Input placeholder="Employer Name" />
-                      </Form.Item>
-                      <Form.Item name={["employment_details", "employment_duration"]} label="Employment Duration (months)">
-                        <Input placeholder="Employment Duration" />
-                      </Form.Item>
-                      <Form.Item name={["employment_details", "position"]} label="Position">
-                        <Input placeholder="Position" />
-                      </Form.Item>
-                    </>
+                  {({
+                    errors,
+                    handleBlur,
+                    handleChange,
+                    handleSubmit,
+                    isSubmitting,
+                    touched,
+                    values,
+                  }) => (
+                    <Form noValidate onSubmit={handleSubmit}>
+                      <Row>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="firstname-signup">First name*</Label>
+                            <Input
+                              id="firstname-signup"
+                              type="text"
+                              value={values.first_name}
+                              name="first_name"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="John"
+                              invalid={Boolean(touched.first_name && errors.first_name)}
+                            />
+                            {touched.first_name && errors.first_name && (
+                              <FormFeedback>{errors.first_name}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="lastname-signup">Last name*</Label>
+                            <Input
+                              id="lastname-signup"
+                              type="text"
+                              value={values.last_name}
+                              name="last_name"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="Doe"
+                              invalid={Boolean(touched.last_name && errors.last_name)}
+                            />
+                            {touched.last_name && errors.last_name && (
+                              <FormFeedback>{errors.last_name}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="email-signup">Email Address*</Label>
+                            <Input
+                              id="email-signup"
+                              type="email"
+                              value={values.email}
+                              name="email"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="demo@company.com"
+                              invalid={Boolean(touched.email && errors.email)}
+                            />
+                            {touched.email && errors.email && (
+                              <FormFeedback>{errors.email}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="phone_number-signup">Phone Number*</Label>
+                            <Input
+                              id="phone_number-signup"
+                              type="text"
+                              value={values.phone_number}
+                              name="phone_number"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="1234567890"
+                              invalid={Boolean(touched.phone_number && errors.phone_number)}
+                            />
+                            {touched.phone_number && errors.phone_number && (
+                              <FormFeedback>{errors.phone_number}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="address-signup">Address*</Label>
+                            <Input
+                              id="address-signup"
+                              type="text"
+                              value={values.address}
+                              name="address"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="123 Main St"
+                              invalid={Boolean(touched.address && errors.address)}
+                            />
+                            {touched.address && errors.address && (
+                              <FormFeedback>{errors.address}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="employment_status-signup">Employment Status*</Label>
+                            <Input
+                              id="employment_status-signup"
+                              type="text"
+                              value={values.employment_status}
+                              name="employment_status"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="Employed"
+                              invalid={Boolean(touched.employment_status && errors.employment_status)}
+                            />
+                            {touched.employment_status && errors.employment_status && (
+                              <FormFeedback>{errors.employment_status}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="income_source-signup">Income Source*</Label>
+                            <Input
+                              id="income_source-signup"
+                              type="text"
+                              value={values.income_source}
+                              name="income_source"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="Coding"
+                              invalid={Boolean(touched.income_source && errors.income_source)}
+                            />
+                            {touched.income_source && errors.income_source && (
+                              <FormFeedback>{errors.income_source}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="monthly_income-signup">Monthly Income*</Label>
+                            <Input
+                              id="monthly_income-signup"
+                              type="number"
+                              value={values.monthly_income}
+                              name="monthly_income"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="500000"
+                              invalid={Boolean(touched.monthly_income && errors.monthly_income)}
+                            />
+                            {touched.monthly_income && errors.monthly_income && (
+                              <FormFeedback>{errors.monthly_income}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="additional_income-signup">Additional Income*</Label>
+                            <Input
+                              id="additional_income-signup"
+                              type="number"
+                              value={values.additional_income}
+                              name="additional_income"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              placeholder="3000000"
+                              invalid={Boolean(touched.additional_income && errors.additional_income)}
+                            />
+                            {touched.additional_income && errors.additional_income && (
+                              <FormFeedback>{errors.additional_income}</FormFeedback>
+                            )}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      {err && (
+                        <FormFeedback style={{ margin: "20px" }} error>
+                          {err}
+                        </FormFeedback>
+                      )}
+                      <Button
+                        type="submit"
+                        color="primary"
+                        disabled={isSubmitting}
+                        style={{ width: "100%", marginTop: "20px" }}
+                      >
+                        Edit
+                      </Button>
+                    </Form>
                   )}
-                  <Form.Item name={["income_details", "monthly_income"]} label="Monthly Income">
-                    <Input placeholder="Monthly Income" />
-                  </Form.Item>
-                  <Form.Item name={["income_details", "additional_income"]} label="Additional Income">
-                    <Input placeholder="Additional Income" />
-                  </Form.Item>
-                  <Form.Item name={["income_details", "income_source"]} label="Income Source">
-                    <Input placeholder="Income Source" />
-                  </Form.Item>
-                  <Button type="primary" block htmlType="submit">
-                    Update
-                  </Button>
-                </Form>
-              </TabPane>
-
-              {/* Additional Tabs (Placeholders) */}
-              
-            </Tabs>
-          </Col>
-        </Row>
-
-        <Modal
-          title="Update Profile"
-          visible={isModalVisible}
-          onCancel={handleCancel}
-          footer={null}
-        >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleUpdateProfile}
-          >
-            <Form.Item name="first_name" label="First Name">
-              <Input />
-            </Form.Item>
-            <Form.Item name="last_name" label="Last Name">
-              <Input />
-            </Form.Item>
-            <Form.Item name="phone_number" label="Phone Number">
-              <Input />
-            </Form.Item>
-            <Form.Item name="address" label="Address">
-              <Input />
-            </Form.Item>
-            <Form.Item name="city" label="City">
-              <Input />
-            </Form.Item>
-            <Form.Item name="state" label="State">
-              <Input />
-            </Form.Item>
-            <Form.Item name="country" label="Country">
-              <Input />
-            </Form.Item>
-            <Form.Item name="employment_status" label="Employment Status">
-              <Select>
-                <Select.Option value="employed">Employed</Select.Option>
-                <Select.Option value="unemployed">Unemployed</Select.Option>
-              </Select>
-            </Form.Item>
-            {form.getFieldValue("employment_status") === "employed" && (
-              <>
-                <Form.Item name={["employment_details", "employer_name"]} label="Employer Name">
-                  <Input />
-                </Form.Item>
-                <Form.Item name={["employment_details", "employment_duration"]} label="Employment Duration (months)">
-                  <Input />
-                </Form.Item>
-                <Form.Item name={["employment_details", "position"]} label="Position">
-                  <Input />
-                </Form.Item>
-              </>
-            )}
-            <Form.Item name={["income_details", "monthly_income"]} label="Monthly Income">
-              <Input />
-            </Form.Item>
-            <Form.Item name={["income_details", "additional_income"]} label="Additional Income">
-              <Input />
-            </Form.Item>
-            <Form.Item name={["income_details", "income_source"]} label="Income Source">
-              <Input />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Update
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
+                </Formik>
+              </ModalBody>
+            </Modal>
+          </Box>
+        </Container>
       </div>
       <Footer />
     </>
   );
 };
 
-export default Profile;
+export default ProfileFormScreen;

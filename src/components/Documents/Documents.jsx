@@ -15,7 +15,7 @@ const Documents = ({ applicationId }) => {
   useEffect(() => {
     fetchRequiredDocuments();
     fetchSubmittedDocuments();
-  }, []);
+  }, [applicationId]);
 
   const fetchRequiredDocuments = async () => {
     try {

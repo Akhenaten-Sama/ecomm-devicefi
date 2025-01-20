@@ -14,6 +14,21 @@
 .profile-details p {
   margin: 10px 0;
 }
+.detail-item{
+    display:flex;
+    justify-content:space-between;
+
+}
+
+.detail-field{
+    font-size: 20px !important;
+    margin-bottom: 10px;
+}
+
+.detail-value{
+    font-size: 20px !important;
+    margin-bottom: 10px;
+}
 
 .profile-details strong {
   font-weight: bold;

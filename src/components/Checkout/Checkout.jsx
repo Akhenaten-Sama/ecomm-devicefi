@@ -37,7 +37,7 @@ const Checkout = () => {
   };
 
   const handleOnboardDevice = () => {
-    window.location.href = "https://admin.devicefi.com/onboarding";
+    window.open(`https://admin.devicefi.com/onboarding?order_id=${order.OrderItems[0].id}`, "_blank");
   };
 
   return status === "completed" ? (
