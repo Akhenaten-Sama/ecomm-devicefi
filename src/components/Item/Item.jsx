@@ -12,12 +12,13 @@ const ItemDetails = ({ item, phone, user }) => {
     }else{
       navigate(`/login`);
     }
-    
   };
 
   return (
     <div className="item-details-card">
-      <img src={phone ? phone : altphone} alt={item.name} className="item-image" />
+      <div className="image-container">
+        <img src={phone ? phone : altphone} alt={item.name} className="item-image" />
+      </div>
       <div className="item-header">
         <h3>{item.name}</h3>
         <h4 className="item-price">₦{item.price}</h4>
@@ -32,10 +33,8 @@ const ItemDetails = ({ item, phone, user }) => {
         {item.payment_plans.map((p, index) => (
           <div key={index} >
             <div className="payment-plan">
-            <span>{p.months} month payments:</span>
-             
-            <span >₦{p.monthly_payment}</span>
-            
+              <span>{p.months} month payments:</span>
+              <span>₦{p.monthly_payment}</span>
             </div>
             {index < item.payment_plans.length - 1 && <hr />}
           </div>

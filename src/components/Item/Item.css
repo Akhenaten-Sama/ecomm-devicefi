@@ -1,18 +1,29 @@
 .item-details-card {
   max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
+  margin: 16px;
+  padding: 16px;
   border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
   font-family: 'Inter', sans-serif;
+  background: #fff;
+}
+
+.image-container {
+  width: 100%;
+  padding-top: 75%; /* 4:3 Aspect Ratio */
+  position: relative;
 }
 
 .item-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 200px;
-  margin: 0 auto 20px;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .item-header {
@@ -22,6 +33,11 @@
   margin-bottom: 10px;
 }
 
+.item-header h3 {
+  font-size: 1.5rem;
+  margin: 8px 0;
+}
+
 h3 {
   font-size: 20px;
   color: #333;
@@ -29,15 +45,15 @@ h3 {
 }
 
 .item-price {
-  font-size: 20px;
-  color: #0161E9;
+  font-size: 1.25rem;
+  color: #e74c3c;
   margin: 10px 0;
 }
 
 .payment-options {
   text-align: left;
   background-color: #fbfbfb;
-  margin-bottom: 20px;
+  margin-top: 16px;
   padding: 10px;
 }
 
@@ -53,14 +69,11 @@ h3 {
   justify-content: space-between;
   align-items: center;
   width: 100%;
- 
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 10px;
+  margin: 8px 0;
 }
-
 
 .payment-plan span {
   margin-right: 10px;
@@ -77,7 +90,7 @@ h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 20px 0;
+  margin-top: 16px;
 }
 
 .availability span {
@@ -108,14 +121,15 @@ h3 {
   width: 100%;
   padding: 10px 20px;
   background-color: #007bff;
-  color: #fff;
+  color: white;
   font-size: 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 16px;
 }
 
 .place-order-btn:hover {
-  background-color: red;
+  background-color: #0056b3;
 }

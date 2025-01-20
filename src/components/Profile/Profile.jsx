@@ -32,17 +32,23 @@ import Header from "../Header/Header"; // Import Header
 import Footer from "../Footer/Footer"; // Import Footer
 import "./Profile.css";
 
-const user = JSON.parse(localStorage.getItem("user"));
+
 
 const ProfileFormScreen = () => {
   const [err, setErr] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    if (user?.login_counter === 0) {
-      setErr("Please change your password before continuing!");
-    }
+    
+
+    setTimeout(() => {
+        if (!user?.id) {
+            navigate("/login");
+          }
+    }, 2000);
+    
   }, [user]);
 
   const handleEditProfile = async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -99,16 +105,16 @@ const ProfileFormScreen = () => {
               />
               <Box sx={{ marginTop: 8, paddingBottom: 2, paddingLeft: "16px" }}>
                 <Typography variant="h4">
-                  {user.first_name} {user.last_name}
+                  {user?.first_name} {user?.last_name}
                 </Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                  {user.email}
+                  {user?.email}
                 </Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                  {user.phone_number}
+                  {user?.phone_number}
                 </Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                  {user.address}
+                  {user?.address}
                 </Typography>
               </Box>
               <IconButton
@@ -130,7 +136,7 @@ const ProfileFormScreen = () => {
                       <strong>Employment Status:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      {user.employment_status}
+                      {user?.employment_status}
                     </Typography>
                   </Box>
                   <Box className="detail-item">
@@ -138,7 +144,7 @@ const ProfileFormScreen = () => {
                       <strong>Income Source:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      {user.income_details?.income_source}
+                      {user?.income_details?.income_source}
                     </Typography>
                   </Box>
                   <Box className="detail-item">
@@ -146,7 +152,7 @@ const ProfileFormScreen = () => {
                       <strong>Monthly Income:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      ₦{user.income_details?.monthly_income}
+                      ₦{user?.income_details?.monthly_income}
                     </Typography>
                   </Box>
                   <Box className="detail-item">
@@ -154,7 +160,7 @@ const ProfileFormScreen = () => {
                       <strong>Additional Income:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      ₦{user.income_details?.additional_income}
+                      ₦{user?.income_details?.additional_income}
                     </Typography>
                   </Box>
                 </Paper>
@@ -169,7 +175,7 @@ const ProfileFormScreen = () => {
                       <strong>Onboarding Status:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      {user.onboarding_status}
+                      {user?.onboarding_status}
                     </Typography>
                   </Box>
                   {/* <Box className="detail-item">
@@ -185,7 +191,7 @@ const ProfileFormScreen = () => {
                       <strong>KYC Status:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      {user.kyc_status}
+                      {user?.kyc_status}
                     </Typography>
                   </Box>
                   <Box className="detail-item">
@@ -193,7 +199,7 @@ const ProfileFormScreen = () => {
                       <strong>Credit Approved:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      {user.credit_approved ? "Yes" : "No"}
+                      {user?.credit_approved ? "Yes" : "No"}
                     </Typography>
                   </Box>
                   <Box className="detail-item">
@@ -201,7 +207,7 @@ const ProfileFormScreen = () => {
                       <strong>Credit Limit:</strong>
                     </Typography>
                     <Typography variant="body1" className="detail-value">
-                      ₦{user.credit_limit}
+                      ₦{user?.credit_limit}
                     </Typography>
                   </Box>
                 </Paper>
@@ -256,7 +262,7 @@ const ProfileFormScreen = () => {
                             <Input
                               id="firstname-signup"
                               type="text"
-                              value={values.first_name}
+                              value={values?.first_name}
                               name="first_name"
                               onBlur={handleBlur}
                               onChange={handleChange}
@@ -274,7 +280,7 @@ const ProfileFormScreen = () => {
                             <Input
                               id="lastname-signup"
                               type="text"
-                              value={values.last_name}
+                              value={values?.last_name}
                               name="last_name"
                               onBlur={handleBlur}
                               onChange={handleChange}
@@ -294,7 +300,7 @@ const ProfileFormScreen = () => {
                             <Input
                               id="email-signup"
                               type="email"
-                              value={values.email}
+                              value={values?.email}
                               name="email"
                               onBlur={handleBlur}
                               onChange={handleChange}
@@ -312,7 +318,7 @@ const ProfileFormScreen = () => {
                             <Input
                               id="phone_number-signup"
                               type="text"
-                              value={values.phone_number}
+                              value={values?.phone_number}
                               name="phone_number"
                               onBlur={handleBlur}
                               onChange={handleChange}

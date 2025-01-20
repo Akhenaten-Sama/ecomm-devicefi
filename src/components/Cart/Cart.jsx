@@ -78,7 +78,7 @@ const Cart = () => {
         {cartItems?.items?.map((item) => (
           <div key={item.id} className="cart-item">
             <div className="product-details">
-              <div className="image-container">
+              <div className="image-container-cart">
                 <button className="remove-button" onClick={() => handleRemoveItem(item.id)}>&times;</button>
                 <img
                   src={item.DeviceCatalog.images[0]}
