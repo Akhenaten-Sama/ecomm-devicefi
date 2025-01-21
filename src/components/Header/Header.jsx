@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ paddingLeft: "70px",marginBottom:"30px", paddingRight: "50px" }}>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ paddingLeft: "70px", marginBottom: "30px", paddingRight: "50px" }}>
       <div className="container-fluid">
         <a className="navbar-brand" onClick={handleLogoClick} style={{ cursor: "pointer" }}>
           <img src={logo} alt="Logo" style={{ width: "80px" }} />
@@ -36,7 +36,7 @@ const Header = () => {
         <button
           className="navbar-toggler"
           type="button"
-          style={{hover:"none"}}
+          style={{ hover: "none" }}
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
           aria-controls="navbarNav"
@@ -65,7 +65,7 @@ const Header = () => {
               </a>
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
-                  <a className="dropdown-item" href="#" >
+                  <a className="dropdown-item" href="#">
                     Phones
                   </a>
                 </li>
@@ -87,7 +87,6 @@ const Header = () => {
               <Tooltip title="Cart">
                 <div className="nav-link icon" onClick={handleCartClick}>
                   <FaCartPlus />
-               
                 </div>
               </Tooltip>
             </li>
@@ -98,13 +97,23 @@ const Header = () => {
                 </div>
               </Tooltip>
             </li>
-            <li className="nav-item">
-              <Tooltip title={user ? "Logout" : "Login"}>
-                <div className="nav-link icon" onClick={handleLogout}>
-                  {user ? <FaSignOutAlt /> : <FaSignInAlt />}
-                </div>
-              </Tooltip>
-            </li>
+            {user ? (
+              <li className="nav-item">
+                <Tooltip title="Logout">
+                  <div className="nav-link icon" onClick={handleLogout}>
+                    <FaSignOutAlt />
+                  </div>
+                </Tooltip>
+              </li>
+            ) : (
+              <li className="nav-item">
+                <Tooltip title="Login">
+                  <div className="nav-link icon" onClick={() => navigate("/login")}>
+                    <FaSignInAlt />
+                  </div>
+                </Tooltip>
+              </li>
+            )}
           </ul>
         </div>
       </div>
