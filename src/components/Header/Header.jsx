@@ -90,13 +90,15 @@ const Header = () => {
                 </div>
               </Tooltip>
             </li>
-            <li className="nav-item">
-              <Tooltip title="Profile">
-                <div className="nav-link icon" onClick={handleUserClick}>
-                  <FaUser />
-                </div>
-              </Tooltip>
-            </li>
+            {user && (
+              <li className="nav-item">
+                <Tooltip title="Profile">
+                  <div className="nav-link icon" onClick={handleUserClick}>
+                    <FaUser />
+                  </div>
+                </Tooltip>
+              </li>
+            )}
             {user ? (
               <li className="nav-item">
                 <Tooltip title="Logout">
