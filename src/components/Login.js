@@ -251,6 +251,7 @@ const Login = () => {
         </div>
         <div style={{overflow:"hidden", position:"relative"}}className="col-md-6 image-section d-flex align-items-center justify-content-center">
         <h1 style={{top:"30px", marginBottom:"50px", position:"absolute"}}>Welcome back</h1>
+        <h4>please login to continue</h4>
           <img style={{position:"absolute", bottom:"0px", width:"60%"}} src={onboardGirl} alt="Onboarding" className="img-fluid" />
         </div>
       </div>
