@@ -34,6 +34,15 @@ export default class User {
       return this.client.put('/user/profile', payload)
     }
 
+    updateProfile(payload) {
+      delete payload.email
+      return this.client.put('/user/profile', payload)
+    }
+
+    checkUserExists(phone){
+           return this.client.get(`/user/admin/phone-number?phone_number=${phone}`)
+    }
+
     fetchProfile() {
       return this.client.get('/user/profile') 
     }

@@ -119,12 +119,17 @@ const Signup = () => {
               <form className="form-width" onSubmit={handleSubmit} style={{ padding: "20px" }}>
                 {currentStep === 0 && (
                   <>
-                    {userExists && <h3>Welcome back, {userName}!</h3>}
+                    {userExists===true && <h3>Welcome back, {userName}!</h3>}
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
-                        {!userExists && <div>
+                        {userExists===null && <div>
                         <h2>Customer Identity</h2>
                         <p style={{fontSize:"14px", marginBottom:"20px"}}>Enter Customer phone number to know it its a returning or new customer.</p>
+                
+                        </div>}
+                        {userExists===false &&  <div>
+                        <h2>New Customer</h2>
+                        <p style={{fontSize:"14px", marginBottom:"20px"}}>The customer appears to be new on our platform.</p>
                 
                         </div>}
                                <Stack spacing={1}>
