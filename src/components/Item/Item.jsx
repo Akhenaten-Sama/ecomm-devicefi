@@ -18,7 +18,7 @@ const ItemDetails = ({ item, phone, user }) => {
       setLoading(true);
       try {
         const response = await api.catalog.getCatalogById(item.id);
-        setProduct(response.data.data);
+        setProduct(response?.data?.data);
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
@@ -42,7 +42,7 @@ const ItemDetails = ({ item, phone, user }) => {
         await api.cart.createCart({ device_id: product.id, quantity:1, selected_months: 6 });
         navigate("/cart");
       } catch (error) {
-        console.log(error.response.data.message);
+        console.log(error.response?.data?.message||error.response?.message);
        
         setErrorMessage("This product is out of stock.");
      

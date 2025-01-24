@@ -4,7 +4,6 @@ import Footer from '../Footer/Footer';
 import Header from '../Header/Header.jsx';
 import ProfileCard from './RightSide.jsx';
 import './PageLayout.css'; // Import the CSS for layout
-
 const ShopPage = () => {
     return (
         <div className="page-layout">

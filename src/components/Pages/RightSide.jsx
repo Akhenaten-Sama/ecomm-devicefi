@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-
+import Logo from "../../assets/blackLogo.png"
 const cardStyle = {
   backgroundColor: '#F5F9FF',
   borderRadius: '12px',
   boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1)', // Reduced elevation
-  padding: '12px',
+  padding: '10px',
   margin: '5px 0', // Reduced gap between cards
 };
 
@@ -13,8 +13,12 @@ const containerStyle = {
   padding: '20px',
   borderRadius: '12px',
   maxWidth: '400px',
+  display:"flex",
+  justifyContent:"center",
+  
+  flexDirection:"column",
   height: '100vh', // Ensure everything is visible within 100vh
-  overflowY: 'auto', // Add scroll if content overflows
+  overflowY: 'hidden', // Add scroll if content overflows
 };
 
 const headingStyle = {
@@ -27,7 +31,7 @@ const headingStyle = {
 };
 
 const subHeadingStyle = {
-  fontSize: '16px',
+  fontSize: '14px',
   fontWeight: '600',
   color: '#0165F2',
 };
@@ -68,8 +72,10 @@ const ProfileCard = () => {
     console.log(user)
  }, [user]);
  
- return (
+ return user? (
     <div style={containerStyle}>
+
+      <p style={subHeadingStyle}>Customer Details</p>
       <div style={cardStyle}>
         <div style={headingStyle}>
           <div style={profileImageStyle}>{user?.first_name.slice(0,1)}{user?.last_name.slice(0,1)}</div>
@@ -109,7 +115,11 @@ const ProfileCard = () => {
         <div style={{ ...textStyle, fontWeight: '600' }}>Amount: {user?.credit_limit}</div>
       </div>
     </div>
-  );
+  ): (<div style={containerStyle}>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"center", width:"100%"}}>
+        <img width="200px"  src={Logo} />
+      </div>
+  </div>)
 };
 
 export default ProfileCard;

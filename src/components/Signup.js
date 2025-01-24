@@ -10,10 +10,13 @@ import onboardGirl from "../assets/onboardgirl.png";
 import logo from "../assets/logo.png";
 import api from "../api"; // Import the API
 import Documents from "./Documents/Documents";
+import ProfileCard from "./Pages/RightSide";
 
 const Signup = () => {
   const location = useLocation();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0); // Start with phone number form
+  const [userExists, setUserExists] = useState(true);
+  const [userName, setUserName] = useState("");
   const [creditLimit, setCreditLimit] = useState(null);
   const [status, setStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -47,7 +50,7 @@ const Signup = () => {
       if (profile.application.current_step === 4) {
         setCreditLimit(profile.application.credit_limit);
         setStatus(profile.applicationstatus);
-       navigate("/shop");
+       // navigate("/shop");
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -55,25 +58,39 @@ const Signup = () => {
   };
 
   const initialValues = {
+    phone_number: "",
     first_name: "",
     last_name: "",
-    phone_number: "",
     email: "",
     address: "",
-    password: "",
+    city: "",
   };
 
   const validationSchema = Yup.object({
+    phone_number: Yup.string().required("Phone Number is required"),
     first_name: Yup.string().required("First Name is required"),
     last_name: Yup.string().required("Last Name is required"),
-    phone_number: Yup.string().required("Phone Number is required"),
     email: Yup.string().email("Invalid email address").required("Email is required"),
     address: Yup.string().required("Address is required"),
-    password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+    city: Yup.string().required("Town/City is required"),
   });
 
-  const handleNext = () => setCurrentStep((prev) => prev + 1);
-  const handlePrev = () => setCurrentStep((prev) => prev - 1);
+  const handlePhoneSubmit = async (values, { setSubmitting }) => {
+    try {
+      const response = await api.user.checkUserExists({ phone_number: values.phone_number });
+      if (response.data.exists) {
+        setUserExists(true);
+        setUserName(response.data.user.name);
+      } else {
+        setCurrentStep(1);
+      }
+    } catch (error) {
+      console.error("Error checking user:", error);
+      setErrorMessage("Error checking user. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -93,16 +110,79 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-container container-fluid">
-      <div className="row">
-        <div className="col-md-6 form-section-signup d-flex flex-column align-items-center justify-content-center">
-          <img src={logo} alt="Logo" className="logo mb-4" />
-          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+    <div className="page-layout">
+      <div style={{ direction: "rtl", width: "60%", display: "flex", justifyContent: "center", alignItems:"center" }} className="main-content">
+        <div style={{ direction: "ltr", marginLeft: "0 auto" }}>
+        {currentStep !==0  && <img src={logo} alt="Logo" className="logo mb-4" /> }
+          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={currentStep === 0 ? handlePhoneSubmit : handleSubmit}>
             {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-              <form className="form-width" onSubmit={handleSubmit}>
+              <form className="form-width" onSubmit={handleSubmit} style={{ padding: "20px" }}>
+                {currentStep === 0 && (
+                  <>
+                    {userExists && <h3>Welcome back, {userName}!</h3>}
+                    <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                        {!userExists && <div>
+                        <h2>Customer Identity</h2>
+                        <p style={{fontSize:"14px", marginBottom:"20px"}}>Enter Customer phone number to know it its a returning or new customer.</p>
+                
+                        </div>}
+                               <Stack spacing={1}>
+                          <InputLabel htmlFor="phone_number">Phone Number*</InputLabel>
+                          <FilledInput
+                            id="phone_number"
+                            type="text"
+                            value={values.phone_number}
+                            name="phone_number"
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            fullWidth
+                            error={Boolean(touched.phone_number && errors.phone_number)}
+                            className="input-field"
+                            disableUnderline={true}
+                            style={{ border: "none", height: "35px", width: "100%" }}
+                          />
+                          {touched.phone_number && errors.phone_number && (
+                            <FormHelperText error>{errors.phone_number}</FormHelperText>
+                          )}
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Button
+                          disableElevation
+                          disabled={isSubmitting}
+                          fullWidth
+                          size="large"
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          className="submit-button"
+                        >
+                          Continue
+                        </Button>
+                      </Grid>
+                    </Grid>
+                    {userExists && (
+                      <Button
+                        disableElevation
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        color="primary"
+                        className="submit-button"
+                        onClick={() => navigate("/shop")}
+                        style={{ marginTop: "10px" }}
+                      >
+                        Continue to Platform
+                      </Button>
+                    )}
+                    {errorMessage && <div className="error-message-signup">{errorMessage}</div>}
+                  </>
+                )}
+
                 {currentStep === 1 && (
                   <>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={2}>
                       <Grid item xs={12}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="first_name">First Name</InputLabel>
@@ -117,7 +197,7 @@ const Signup = () => {
                             error={Boolean(touched.first_name && errors.first_name)}
                             className="input-field"
                             disableUnderline={true}
-                            style={{ border: "none", height: "45px" }}
+                            style={{ border: "none", height: "35px", width: "100%" }}
                           />
                           {touched.first_name && errors.first_name && (
                             <FormHelperText error>{errors.first_name}</FormHelperText>
@@ -139,7 +219,7 @@ const Signup = () => {
                             error={Boolean(touched.last_name && errors.last_name)}
                             className="input-field"
                             disableUnderline={true}
-                            style={{ border: "none", height: "45px" }}
+                            style={{ border: "none", height: "35px", width: "100%" }}
                           />
                           {touched.last_name && errors.last_name && (
                             <FormHelperText error>{errors.last_name}</FormHelperText>
@@ -161,7 +241,7 @@ const Signup = () => {
                             error={Boolean(touched.phone_number && errors.phone_number)}
                             className="input-field"
                             disableUnderline={true}
-                            style={{ border: "none", height: "45px" }}
+                            style={{ border: "none", height: "35px", width: "100%" }}
                           />
                           {touched.phone_number && errors.phone_number && (
                             <FormHelperText error>{errors.phone_number}</FormHelperText>
@@ -183,7 +263,7 @@ const Signup = () => {
                             error={Boolean(touched.email && errors.email)}
                             className="input-field"
                             disableUnderline={true}
-                            style={{ border: "none", height: "45px" }}
+                            style={{ border: "none", height: "35px", width: "100%" }}
                           />
                           {touched.email && errors.email && (
                             <FormHelperText error>{errors.email}</FormHelperText>
@@ -205,7 +285,7 @@ const Signup = () => {
                             error={Boolean(touched.address && errors.address)}
                             className="input-field"
                             disableUnderline={true}
-                            style={{ border: "none", height: "45px" }}
+                            style={{ border: "none", height: "35px", width: "100%" }}
                           />
                           {touched.address && errors.address && (
                             <FormHelperText error>{errors.address}</FormHelperText>
@@ -215,22 +295,22 @@ const Signup = () => {
 
                       <Grid item xs={12}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="password">Password</InputLabel>
+                          <InputLabel htmlFor="city">Town/City</InputLabel>
                           <FilledInput
-                            id="password"
-                            type="password"
-                            value={values.password}
-                            name="password"
+                            id="city"
+                            type="text"
+                            value={values.city}
+                            name="city"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             fullWidth
-                            error={Boolean(touched.password && errors.password)}
+                            error={Boolean(touched.city && errors.city)}
                             className="input-field"
                             disableUnderline={true}
-                            style={{ border: "none", height: "45px" }}
+                            style={{ border: "none", height: "35px", width: "100%" }}
                           />
-                          {touched.password && errors.password && (
-                            <FormHelperText error>{errors.password}</FormHelperText>
+                          {touched.city && errors.city && (
+                            <FormHelperText error>{errors.city}</FormHelperText>
                           )}
                         </Stack>
                       </Grid>
@@ -282,9 +362,9 @@ const Signup = () => {
             )}
           </Formik>
         </div>
-        <div style={{ overflow: "hidden", position: "relative" }} className="col-md-6 image-section d-flex align-items-center justify-content-center">
-          <img style={{ position: "absolute", bottom: "0px", width: "60%" }} src={onboardGirl} alt="Onboarding" className="img-fluid" />
-        </div>
+      </div>
+      <div style={{ width: "40%" }} className="right-section">
+        <ProfileCard />
       </div>
     </div>
   );
