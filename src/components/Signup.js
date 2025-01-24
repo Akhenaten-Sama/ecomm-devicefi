@@ -282,11 +282,7 @@ const Signup = () => {
             )}
           </Formik>
         </div>
-        <div style={{ overflow: "hidden", position: "relative" }} className="col-md-6 image-section d-flex flex-column align-items-center justify-content-center">
-          <div style={{ position: "absolute", top: "40px", textAlign: "center" }}>
-            <h1>Apply and be eligible</h1>
-            <h4>to receive loans for a mobile phone today</h4>
-          </div>
+        <div style={{ overflow: "hidden", position: "relative" }} className="col-md-6 image-section d-flex align-items-center justify-content-center">
           <img style={{ position: "absolute", bottom: "0px", width: "60%" }} src={onboardGirl} alt="Onboarding" className="img-fluid" />
         </div>
       </div>

@@ -15,12 +15,6 @@ const ItemsDisplay = () => {
   const user = localStorage.getItem("user")? JSON.parse(localStorage.getItem("user")): null;
   const navigate = useNavigate();
 
-  // useEffect(()=>{
-  //   if(!user?.id){
-  //     navigate("/login");
-  //   }
-  // },[user?.id]);
-
   useEffect(() => {
     fetchCategories();
     fetchItems("all"); // Fetch all devices by default
@@ -45,7 +39,7 @@ const ItemsDisplay = () => {
         response = await api.catalog.getDevicesByCategory(category);
       }
       setItems(response.data.data.devices);
-      setDisplayedItems(response.data.data.devices.slice(0, 6)); // Display first 9 items initially
+      setDisplayedItems(response.data.data.devices.slice(0, 4)); // Display first 4 items initially
     } catch (error) {
       console.error("Error fetching items:", error);
     } finally {
@@ -89,7 +83,7 @@ const ItemsDisplay = () => {
         <div className="items-grid">
           {displayedItems.map((item, index) => (
             <div key={index} className="item-card">
-              <ItemDetails item={item}user={user}phone={item.images[0]} />
+              <ItemDetails item={item} user={user} phone={item.images[0]} />
             </div>
           ))}
         </div>

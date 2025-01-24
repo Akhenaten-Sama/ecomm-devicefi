@@ -14,11 +14,11 @@
 
 .header-logo {
   display: flex;
-  align-items: center;
+  align-items: left;
 }
 
 .logo img {
-  width: auto;
+  width: 100px;
 }
 
 .logo-text {
@@ -30,7 +30,7 @@
 .search-bar {
   position: relative;
   flex: 1;
-  max-width: 350px;
+  max-width: 450px;
   margin: 0 16px;
 }
 

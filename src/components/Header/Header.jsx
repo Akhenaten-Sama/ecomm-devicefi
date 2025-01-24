@@ -28,10 +28,10 @@ const Header = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ paddingLeft: "70px", marginBottom: "30px", paddingRight: "50px" }}>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ marginBottom: "10px" }}>
       <div className="container-fluid">
         <a className="navbar-brand" onClick={handleLogoClick} style={{ cursor: "pointer" }}>
-          <img src={logo} alt="Logo" style={{ width: "80px" }} />
+          <img src={logo} alt="Logo" style={{ width: "100px" }} />
         </a>
         <button
           className="navbar-toggler"
@@ -83,14 +83,14 @@ const Header = () => {
                 <input className="form-control me-2" type="search" placeholder="What are you looking for?" aria-label="Search" />
               </form>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Tooltip title="Cart">
                 <div className="nav-link icon" onClick={handleCartClick}>
                   <FaCartPlus />
                 </div>
               </Tooltip>
-            </li>
-            {user && (
+            </li> */}
+            {/* {user && (
               <li className="nav-item">
                 <Tooltip title="Profile">
                   <div className="nav-link icon" onClick={handleUserClick}>
@@ -115,7 +115,7 @@ const Header = () => {
                   </div>
                 </Tooltip>
               </li>
-            )}
+            )} */}
           </ul>
         </div>
       </div>

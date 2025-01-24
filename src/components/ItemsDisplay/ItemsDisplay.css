@@ -3,23 +3,24 @@
   max-width: 1200px;
   margin: 0 auto;
   background-color: #ffffff;
+ 
 }
 
 .title {
   font-size: 24px;
   font-weight: bold;
   text-align: left;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .category-tabs {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .items-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
 .item-card {
@@ -36,15 +37,15 @@
 .view-all-btn {
   padding: 10px 30px;
   font-size: 16px;
-  background-color:white;
-  color:black;
+  background-color: white;
+  color: black;
   border: 1px solid black;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .view-all-btn:hover {
-  background-color:"red";
+  background-color: red;
 }
 
 .empty-state {

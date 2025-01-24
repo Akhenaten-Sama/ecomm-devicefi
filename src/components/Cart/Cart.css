@@ -92,7 +92,7 @@
 .product-name {
   font-size: 14px;
   font-weight: bold;
-  align-self: center;
+  align-self: center !important;
 }
 
 .price,
@@ -153,6 +153,7 @@
   margin-top: 20px;
   border-top: 1px solid #ddd;
   padding-top: 20px;
+  margin-bottom: 5px;
 }
 
 .cart-total h3 {
@@ -194,7 +195,7 @@ button:hover {
 }
 
 .return-to-shop {
-  margin-top: 20px;
+  margin-top: 5px;
   text-align: left;
 }
 

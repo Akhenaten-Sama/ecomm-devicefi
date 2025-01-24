@@ -42,17 +42,17 @@ const Checkout = () => {
 
   return status === "completed" ? (
     <div className="checkout-container">
-      <div className="success-icon">
+      {/* <div className="success-icon">
         <FaCheckCircle className="icon" />
-      </div>
+      </div> */}
       <h1 className="success-title">Order Successful!</h1>
       <p className="success-message">
-        You have successfully ordered the item below
+      You have successfully order for the item below
+      
         <br />
         {/* View order details for shipping and installment payment date.
         <br /> */}
-        We are setting up your device - we will deliver to you within 48 hours
-      </p>
+        view order details for shipping and instalment payment date  </p>
       <div className="order-summary">
         <div className="product-details">
           <img src={order?.OrderItems[0].DeviceCatalog?.images[0]} alt="Oppo A1" className="product-image" />
@@ -65,9 +65,9 @@ const Checkout = () => {
               {order?.OrderItems[0].DeviceCatalog?.name}'s  Skin High quality vinyl with air channel adhesive for easy
               bubble free install & mess free removal Pressure sensitive.
             </p>
-            <p className="product-colours">
+            {/* <p className="product-colours">
               Colours: <span className="colour-indicator"></span>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
@@ -104,16 +104,16 @@ const Checkout = () => {
               Oppo Skin High quality vinyl with air channel adhesive for easy
               bubble free install & mess free removal Pressure sensitive.
             </p>
-            <p className="product-colours">
+            {/* <p className="product-colours">
               Colours: <span className="colour-indicator"></span>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
-      <div className="pagination">
+      {/* <div className="pagination">
         <span className="pagination-dot active"></span>
         <span className="pagination-dot"></span>
-      </div>
+      </div> */}
       <button onClick={handleContinueToCheckout} className="checkout-button">
         Continue to Checkout
       </button>
