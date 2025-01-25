@@ -8,13 +8,13 @@ export default class User {
     }
   
     updateUser(payload) {
-      const email = payload.email;
-      delete payload.email;
+      const id = payload.user_id;
+      delete payload.user_id;
       delete payload.created_at
       delete payload.updated_at
       delete payload.update_date
       //delete payload.password;
-      return this.client.put(`/user/${email}`, payload);
+      return this.client.put(`/onboarding/in-store/register/${id}`, payload);
     }
   
     deleteUser(email) {

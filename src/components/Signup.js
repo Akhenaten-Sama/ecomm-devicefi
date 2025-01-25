@@ -22,6 +22,7 @@ const Signup = () => {
   const [status, setStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [documentTypes, setDocumentTypes] = useState([]);
+  const [edit, setEdit] = useState(false)
   const [submittedDocuments, setSubmittedDocuments] = useState([]);
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
@@ -46,13 +47,13 @@ const Signup = () => {
 
   useEffect(() => {
     fetchUserProfile();
-   //fetchDocumentTypes();
-   // fetchSubmittedDocuments();
+    //fetchDocumentTypes();
+    // fetchSubmittedDocuments();
     if (prof?.current_step === 4) {
       setUserExists(true)
-     
-    }else if(prof?.current_step<3&&prof?.current_step!==1){
-    setCurrentStep((2))
+
+    } else if (prof?.current_step < 3 && prof?.current_step !== 1 && edit === false) {
+      setCurrentStep((2))
     }
   }, [prof]);
 
@@ -78,7 +79,7 @@ const Signup = () => {
     }
   };
 
-  const fetchDocumentTypes = async (document=prof?.id) => {
+  const fetchDocumentTypes = async (document = prof?.id) => {
     try {
       const response = await api.document.getRequiredDocuments(document);
       setDocumentTypes(response.data.data);
@@ -99,12 +100,12 @@ const Signup = () => {
   };
 
   const initialValues = {
-    phone_number: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    address: "",
-    city: "",
+    phone_number: "" || user?.phone_number,
+    first_name: "" || user?.first_name,
+    last_name: "" || user?.last_name,
+    email: "" || user?.email,
+    address: "" || user?.address,
+    city: "" || user?.city,
     document_type: "",
     id_number: "",
   };
@@ -139,11 +140,11 @@ const Signup = () => {
     }
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, app = prof) => {
     try {
       delete values.document_type
       delete values.id_number
-      const response = await api.user.createUser(values);
+      const response = !app ? await api.user.createUser(values) : await api.user.updateUser({ ...values, user_id: prof?.user_id });
       const { user, token, application } = response.data.data;
       fetchUserProfile();
       fetchDocumentTypes(application.id)
@@ -151,7 +152,7 @@ const Signup = () => {
       localStorage.setItem("user", JSON.stringify(user));
       // localStorage.setItem("devicefi_token", token);
       localStorage.setItem("application", JSON.stringify(application));
-      
+
     } catch (error) {
       console.error("Registration error:", error);
       setErrorMessage(error?.response?.data?.errors);
@@ -173,7 +174,7 @@ const Signup = () => {
         application_id: prof.id
       });
       fetchSubmittedDocuments();
-      
+
     } catch (error) {
       console.error("Error submitting document:", error);
       setErrorMessage(error?.response?.data?.message);
@@ -200,16 +201,19 @@ const Signup = () => {
               <form className="form-width" style={{ padding: "20px" }}>
                 {currentStep === 0 && (
                   <>
-                    {userExists === true && <div style={{backgroundColor: '#F5F9FF',
-  borderRadius: '12px',
-  boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1)', // Reduced elevation
-  padding: '20px',
-  margin: '5px 0'}}>
-                      <div style={headingStyle}>
-          <div style={profileImageStyle}>{user?.first_name.slice(0,1)}{user?.last_name.slice(0,1)}</div>
-          <span>{user?.first_name} {user?.last_name}</span>
-          
-        </div><div style={{justifySelf:"center"}}>{user?.phone_number.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1-$2-$3-$4")}</div></div>}
+
+                    {userExists === true && <div> <h3 style={{ marginBottom: "30px" }}>Returning Customer</h3><div style={{
+                      backgroundColor: '#F5F9FF',
+                      borderRadius: '12px',
+                      boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1)', // Reduced elevation
+                      padding: '20px',
+                      margin: '5px 0', marginBottom: "20px"
+                    }}>
+                      <div style={{ ...headingStyle, }}>
+                        <div style={profileImageStyle}>{user?.first_name.slice(0, 1)}{user?.last_name.slice(0, 1)}</div>
+                        <span>{user?.first_name} {user?.last_name}</span>
+
+                      </div><div style={{ justifySelf: "center" }}>{user?.phone_number?.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1-$2-$3-$4")}</div></div></div>}
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         {userExists === null && (
@@ -222,25 +226,27 @@ const Signup = () => {
                           <div>
                             <h2>New Customer</h2>
                             <p style={{ fontSize: "14px", marginBottom: "20px" }}>The customer appears to be new on our platform.</p>
-                            <div style={{backgroundColor: '#F5F9FF',
-  borderRadius: '12px',
-  boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1)', // Reduced elevation
-  padding: '10px',
-  margin: '5px 0'}}>
-                      <div style={headingStyle}>
-          
-        
-          
-        </div><div style={{justifySelf:"center"}}>{values?.phone_number.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1-$2-$3-$4")}</div></div>
+                            <div style={{
+                              backgroundColor: '#F5F9FF',
+                              borderRadius: '12px',
+                              boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1)', // Reduced elevation
+                              padding: '10px',
+                              margin: '5px 0'
+                            }}>
+                              <div style={headingStyle}>
+
+
+
+                              </div>{values?.phone_number&&<div style={{ justifySelf: "center" }}>{values?.phone_number.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1-$2-$3-$4")}</div>}</div>
                           </div>
                         )}
-                         {(userExists !== false && userExists !==true) && (<Stack spacing={1}>
+                        {(userExists !== false && userExists !== true) && (<Stack spacing={1}>
                           <InputLabel htmlFor="phone_number">Phone Number*</InputLabel>
-                          
+
                           <FilledInput
                             id="phone_number"
                             type="text"
-                            value={values.phone_number||user?.phone_number}
+                            value={values.phone_number || user?.phone_number}
                             name="phone_number"
                             onBlur={handleBlur}
                             onChange={handleChange}
@@ -256,49 +262,78 @@ const Signup = () => {
                         </Stack>)}
                       </Grid>
                       <Grid item xs={12}>
-                      {userExists !== true &&    <Button
+                        {userExists !== true && <div>
+
+                          <Button
+                            disableElevation
+                            disabled={isSubmitting}
+                            fullWidth
+                            size="large"
+                            variant="contained"
+                            color="primary"
+                            style={{ marginTop: "20px" }}
+                            className="submit-button"
+                            onClick={() => handleContinueClick(values)}
+                          >
+                            Continue
+                          </Button>
+                          {userExists !== null && <Button
+                            disableElevation
+                            disabled={isSubmitting}
+                            fullWidth
+                            size="large"
+                            variant="outlined"
+                            color="primary"
+                            style={{ marginTop: "20px" }}
+                            className="submit-button"
+                            onClick={() => { localStorage.clear(); window.location.reload() }}
+                          >
+                            Previous
+                          </Button>}
+                        </div>}
+                      </Grid>
+                    </Grid>
+                    {userExists && currentStep === 0 && (
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Button
                           disableElevation
-                          disabled={isSubmitting}
                           fullWidth
                           size="large"
                           variant="contained"
                           color="primary"
                           className="submit-button"
-                          onClick={() => handleContinueClick(values)}
+                          onClick={() => navigate("/shop")}
+                          style={{ marginTop: "25px" }}
                         >
-                          Continue
-                        </Button>}
-                      </Grid>
-                    </Grid>
-                    {userExists && currentStep === 0 && (
-                      <Button
-                        disableElevation
-                        fullWidth
-                        size="large"
-                        variant="contained"
-                        color="primary"
-                        className="submit-button"
-                        onClick={() => navigate("/shop")}
-                        style={{ marginTop: "10px" }}
-                      >
-                        Continue to Platform
-                      </Button>
+                          Continue to Platform
+                        </Button>
+                        <Button fullWidth
+                          size="large"
+                          variant="outlined"
+                          color="primary"
+                          className="submit-button"
+                          onClick={() => { localStorage.clear(); window.location.reload() }}
+                          style={{ marginTop: "25px" }}>
+                          Previous
+                        </Button>
+                      </div>
+
                     )}
-                  
+
                   </>
                 )}
 
                 {currentStep === 1 && (
                   <>
-                  <h4>New Customer Registration</h4>
-                  <div>
-                  <Steps progressDot size='default' style={{marginBottom:"10px",marginLeft:"-60px", width:"100% !important"}} current={0}>
-                      <Step />
-                      <Step />
-                      <Step />
-                    </Steps>
-                  </div>
-                  
+                    <h4>New Customer Registration</h4>
+                    <div>
+                      <Steps progressDot size='default' style={{ marginBottom: "10px", marginLeft: "-60px", width: "100% !important" }} current={0}>
+                        <Step />
+                        <Step />
+                        <Step />
+                      </Steps>
+                    </div>
+
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         <Stack spacing={1}>
@@ -440,7 +475,7 @@ const Signup = () => {
                           size="large"
                           variant="contained"
                           color="primary"
-                          style={{marginTop:"10px"}}
+                          style={{ marginTop: "10px" }}
                           className="submit-button"
                           onClick={() => handleSubmit(values)}
                         >
@@ -448,14 +483,14 @@ const Signup = () => {
                         </Button>
                       </Grid>
                     </Grid>
-                    
+
                   </>
                 )}
 
                 {currentStep === 2 && (
                   <>
-                    <h1>Onboarding</h1>
-                    <Steps current={1}>
+                    <h2>Onboarding</h2>
+                    <Steps progressDot style={{ marginBottom: "10px", marginLeft: "-60px", marginTop: "20px", width: "100% !important" }} current={1}>
                       <Step />
                       <Step />
                       <Step />
@@ -499,6 +534,7 @@ const Signup = () => {
                             onBlur={handleBlur}
                             onChange={handleChange}
                             fullWidth
+                            placeholder="Enter ID Verification Number"
                             error={Boolean(touched.id_number && errors.id_number)}
                             className="input-field"
                             disableUnderline={true}
@@ -516,7 +552,7 @@ const Signup = () => {
                             backgroundColor: "#f5f5f5",
                             height: "150px",
                             width: "100%",
-                            marginTop:"10px",
+                            marginTop: "10px",
                             padding: "20px",
                             justifyContent: "center",
                             alignItems: "center",
@@ -539,7 +575,16 @@ const Signup = () => {
                         </div>
                       </Grid>
 
-                      <Grid item xs={12}>
+                      <Grid item style={{ display: "flex" }} xs={12}>
+                        <Button disableElevation
+                          disabled={isSubmitting}
+                          fullWidth
+                          size="large"
+                          variant="outlined"
+                          color="primary"
+                          style={{ marginTop: "20px", marginRight: "10px" }}
+                          className="submit-button"
+                          onClick={() => { setEdit(true); setCurrentStep(1) }}> Previous</Button>
                         <Button
                           disableElevation
                           disabled={isSubmitting}
@@ -547,20 +592,22 @@ const Signup = () => {
                           size="large"
                           variant="contained"
                           color="primary"
+                          style={{ marginTop: "20px" }}
                           className="submit-button"
                           onClick={() => handleDocumentSubmit(values)}
                         >
-                          Continue
+                          Submit
                         </Button>
+
                       </Grid>
                     </Grid>
-                  
+
                   </>
                 )}
 
                 {currentStep === 3 && (
                   <div style={styles.container}>
-                    
+
                     <CheckCircleOutlined style={styles.icon} />
                     <h3 style={styles.heading}>Congratulations!</h3>
                     <p style={styles.subtext}>You are eligible to buy products below</p>
@@ -578,7 +625,7 @@ const Signup = () => {
         </div>
       </div>
       <div style={{ width: "40%" }} className="right-section">
-        <ProfileCard check ={currentStep} />
+        <ProfileCard check={currentStep} />
       </div>
     </div>
   );
@@ -590,10 +637,10 @@ const containerStyle = {
   padding: '20px',
   borderRadius: '12px',
   maxWidth: '400px',
-  display:"flex",
-  justifyContent:"center",
-  
-  flexDirection:"column",
+  display: "flex",
+  justifyContent: "center",
+
+  flexDirection: "column",
   height: '100vh', // Ensure everything is visible within 100vh
   overflowY: 'hidden', // Add scroll if content overflows
 };
@@ -606,7 +653,7 @@ const headingStyle = {
   display: 'flex',
   alignItems: 'center',
   gap: '10px',
-  
+
 };
 
 const subHeadingStyle = {
@@ -661,7 +708,7 @@ const styles = {
     fontWeight: "bold",
     marginBottom: "8px",
     color: "#000",
-    lineHeight:"30px", 
+    lineHeight: "30px",
   },
   subtext: {
     fontSize: "16px",

@@ -3,6 +3,21 @@ import { useNavigate } from "react-router-dom";
 import "./Item.css"; // Import the CSS for styling
 import altphone from "../../assets/phone.png"; // Import the phone image
 import api from "../../api";
+
+const paymentPlans = [
+  {
+    "months": 6,
+    "monthly_payment": 8000
+  },
+  {
+    "months": 12,
+    "monthly_payment": 5000
+  },
+  {
+    "months": 24,
+    "monthly_payment": 3000
+  }
+]
 const ItemDetails = ({ item, phone, user }) => {
    const [product, setProduct] = useState(null);
    const [loading, setLoading] = useState(true);
@@ -66,13 +81,13 @@ const ItemDetails = ({ item, phone, user }) => {
           <span>Payments</span>
         </div>
         <hr />
-        {item.payment_plans.map((p, index) => (
+        {paymentPlans.map((p, index) => (
           <div key={index} >
             <div className="payment-plan">
               <span>{p.months} month payments:</span>
               <span>₦{p.monthly_payment}</span>
             </div>
-            {index < item.payment_plans.length - 1 && <hr />}
+            {index < paymentPlans.length - 1 && <hr />}
           </div>
         ))}
       </div>
