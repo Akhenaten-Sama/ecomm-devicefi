@@ -94,7 +94,7 @@ const ProfileCard = ({check}) => {
         <div style={textStyle}>State/province/area:{user?.state}, {user?.country}</div>
       </div>
 
-      <div style={cardStyle}>
+     {user?.credit_approved && <div style={cardStyle}>
         <div style={subHeadingStyle}>Verification</div>
         <div>
           <span style={textStyle}>
@@ -102,19 +102,19 @@ const ProfileCard = ({check}) => {
           </span>
           <span style={{ marginLeft: '8px', color: '#28a745' }}>✔</span>
         </div>
-      </div>
+      </div>}
 
-      <div style={cardStyle}>
+      {user?.credit_approved && <div style={cardStyle}>
         <div style={subHeadingStyle}>Credit Check</div>
         <div style={{ ...textStyle, fontWeight: '500' }}>
           Status: <span style={{ color: '#28a745' }}>{user?.credit_approved?"Eligible":"Not Eligible"}</span>
         </div>
-      </div>
+      </div>}
 
-      <div style={cardStyle}>
+      {user?.credit_approved && <div style={cardStyle}>
         <div style={subHeadingStyle}>Credit Qualify Amount</div>
-        <div style={{ ...textStyle, fontWeight: '600' }}>Amount: {user?.credit_limit}</div>
-      </div>
+        <div style={{ ...textStyle, fontWeight: '600' }}>Amount: R{user?.credit_limit}</div>
+      </div>}
     </div>
   ): (<div style={containerStyle}>
 

@@ -82,7 +82,7 @@ const Signup = () => {
   const fetchDocumentTypes = async (document = prof?.id) => {
     try {
       const response = await api.document.getRequiredDocuments(document);
-      setDocumentTypes(response.data.data);
+      setDocumentTypes(response.data.data.filter(doc => doc.is_required));
     } catch (error) {
       console.error("Error fetching document types:", error);
     }
@@ -612,7 +612,7 @@ const Signup = () => {
                     <h3 style={styles.heading}>Congratulations!</h3>
                     <p style={styles.subtext}>You are eligible to buy products below</p>
                     <div style={styles.amountBox}>
-                      <span style={styles.amount}>#{user?.credit_limit}</span>
+                      <span style={styles.amount}>R{user?.credit_limit}</span>
                     </div>
                     <Button type="primary" onClick={() => navigate("/shop")} style={styles.button}>
                       Explore Product

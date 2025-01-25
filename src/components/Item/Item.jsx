@@ -72,7 +72,7 @@ const ItemDetails = ({ item, phone, user }) => {
       </div>
       <div className="item-header">
         <h3>{item.name}</h3>
-        <h4 className="item-price">₦{item.price}</h4>
+        <h4 className="item-price">R{item.price}</h4>
       </div>
 
       <div className="payment-options">
@@ -85,7 +85,7 @@ const ItemDetails = ({ item, phone, user }) => {
           <div key={index} >
             <div className="payment-plan">
               <span>{p.months} month payments:</span>
-              <span>₦{p.monthly_payment}</span>
+              <span>R{p.monthly_payment}</span>
             </div>
             {index < paymentPlans.length - 1 && <hr />}
           </div>
