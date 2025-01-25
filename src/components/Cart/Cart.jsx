@@ -8,13 +8,14 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
+  const user = localStorage.getItem('user')? JSON.parse(localStorage.getItem("user")):null
   useEffect(() => {
     fetchCartItems();
   }, []);
 
   const fetchCartItems = async () => {
     try {
-      const response = await api.cart.getCart();
+      const response = await api.cart.getCart(user?.id);
       setCartItems(response.data.data);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -23,8 +24,8 @@ const Cart = () => {
 
   const handleRemoveItem = async (id) => {
     try {
-      await api.cart.removeCartItem(id);
-      fetchCartItems();
+      await api.cart.removeCartItem(id,user?.id);
+      fetchCartItems(user?.id);
     } catch (error) {
       console.error("Error removing cart item:", error);
     }
@@ -41,9 +42,9 @@ const Cart = () => {
 
   const handleConfirmOrder = async () => {
     try {
-      const response = await api.cart.selectLender();
+      const response = await api.cart.selectLender(user.id);
       if (response.data) {
-        await api.orders.createOrder({ cart_id: cartItems.id });
+        await api.orders.createOrder({user_id:user?.id, cart_id: cartItems.id });
         navigate("/checkout");
       }
     } catch (error) {

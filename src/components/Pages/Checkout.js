@@ -9,7 +9,7 @@ const CheckoutPage = () => {
             <Header />
             
            <Checkout />
-            <Footer />
+          
         </div>
     );
 };

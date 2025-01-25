@@ -3,7 +3,8 @@ import "./Checkout.css";
 import { FaCheckCircle } from "react-icons/fa";
 import phone from "../../assets/phone.png";
 import DeliveryDetails from "../Delivery/Delivery";
-import api from "../../api"; // Import the API
+import api from "../../api"; // Import the APIy
+import Check from '../../assets/check.png'
 
 const Checkout = () => {
   const [showDeliveryDetails, setShowDeliveryDetails] = useState(false);
@@ -17,7 +18,7 @@ const Checkout = () => {
 
   const fetchOrder = async () => {
     try {
-      const response = await api.orders.getOrder(); // Replace "order_id" with the actual order ID
+      const response = await api.orders.getOrder(user?.id); // Replace "order_id" with the actual order ID
       setOrder(response.data.data.orders[0]);
       setStatus(response.data.data.orders[0].status);
     } catch (error) {
@@ -37,14 +38,15 @@ const Checkout = () => {
   };
 
   const handleOnboardDevice = () => {
+    localStorage.clear()
     window.open(`https://admin.devicefi.com/onboarding?order_id=${order.OrderItems[0].id}`, "_blank");
   };
 
   return status === "completed" ? (
     <div className="checkout-container">
-      {/* <div className="success-icon">
-        <FaCheckCircle className="icon" />
-      </div> */}
+      <div className="success-icon">
+        <img src={Check}/>
+      </div>
       <h1 className="success-title">Order Successful!</h1>
       <p className="success-message">
       You have successfully order for the item below
@@ -71,11 +73,10 @@ const Checkout = () => {
           </div>
         </div>
       </div>
-      {user?.login_type !== "USER" && (
         <button onClick={handleOnboardDevice} className="checkout-button">
           Onboard this device
         </button>
-      )}
+    
     </div>
   ) : showDeliveryDetails ? (
     <DeliveryDetails order={order} setStatus={setStatus} />

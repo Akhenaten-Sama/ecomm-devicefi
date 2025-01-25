@@ -12,6 +12,6 @@ export default class Catalog {
     }
 
     getCatalogById(id) {
-        return this.client.get(`/device-catalog/${id}`);
+        return this.client.get(`/device-catalog/admin/${id}`);
     }
 }

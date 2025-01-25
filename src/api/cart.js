@@ -4,32 +4,36 @@ export default class Cart {
     }
 
     createCart(payload) {
-        return this.client.post('/Cart/items', payload);
+       const  userId = payload.user_id
+       delete payload.user_id
+        return this.client.post(`/cart/items/admin/${userId}`, payload);
     }
 
     updateCartItem(payload) {
         const id = payload.device_id;
+        const userId = payload.user_id;
         delete payload.device_id;
+        delete payload.user_id;
 
 
-        return this.client.put(`/cart/items${id}`, payload);
+        return this.client.put(`/cart/items/${id}admin/${userId}}`, payload);
     }
 
-    removeCartItem(id) {
-        return this.client.put(`/cart/items/remove/${id}`,);
+    removeCartItem(id, userId) {
+        return this.client.put(`/cart/items/remove/${id}/admin/${userId}`,);
     }
-    emptyCart() {
-        return this.client.delete(`/cart`);
+    emptyCart(user_id) {
+        return this.client.delete(`/cart/admin/${user_id}`);
     }
 
-    selectLender(){
-        return this.client.post(`/cart/lender`, {
+    selectLender(user_id){
+        return this.client.post(`/cart/lender/admin/${user_id}`, {
             lender_id: "146893ad-e48a-40df-b6d8-ac464c57992f",
             lending_period: 12,
         })
     }
 
-    getCart() {
-        return this.client.get(`/cart`);
+    getCart(user_id) {
+        return this.client.get(`/cart/admin/${user_id}`);
     }
 }

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Logo from "../../assets/blackLogo.png"
+import Placeholder from "../../assets/empty-user.png"
 const cardStyle = {
   backgroundColor: '#F5F9FF',
   borderRadius: '12px',
@@ -12,7 +13,7 @@ const containerStyle = {
   fontFamily: 'Inter, sans-serif',
   padding: '20px',
   borderRadius: '12px',
-  maxWidth: '400px',
+  
   display:"flex",
   justifyContent:"center",
   
@@ -63,10 +64,10 @@ const profileImageStyle = {
   fontSize: '16px',
 };
 
-const ProfileCard = () => {
+const ProfileCard = ({check}) => {
  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
  
- 
+ console.log(check, 'ydiuwdhiowdodd')
  useEffect(() => { 
 
     console.log(user)
@@ -116,9 +117,16 @@ const ProfileCard = () => {
       </div>
     </div>
   ): (<div style={containerStyle}>
-      <div style={{display:"flex", alignItems:"center", justifyContent:"center", width:"100%"}}>
-        <img width="200px"  src={Logo} />
-      </div>
+
+     {check!==1? <div style={{display:"flex", alignItems:"center", justifyContent:"center", width:"100%"}}>
+        <img width="150px"  src={Logo} />
+      </div>:<div style={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column",width:"100%"}}>
+        
+        <img style={{justifySelf:"center", }}src={Placeholder} width='200px'/>
+        <h6 style={{marginTop:"20px"}}>No Customer Details
+       </h6>
+        <h6> Collected yet</h6>
+        </div>}
   </div>)
 };
 

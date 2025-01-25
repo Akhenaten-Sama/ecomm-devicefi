@@ -4,11 +4,13 @@ export default class Orders {
     }
 
     createOrder(payload) {
-        return this.client.post('/order', payload);
+        const userId = payload.user_id
+        delete payload.user_id
+        return this.client.post(`/order/admin/${userId}`, payload);
     }
 
     getOrderById(id) {
-        return this.client.get(`/order/${id}`);
+        return this.client.get(`/order/admin/single${id}`);
     }
 
     getAllOrders() {
@@ -18,8 +20,8 @@ export default class Orders {
     updateOrderStatus(id, details) {
         return this.client.put(`/order/${id}/status`, details);
     }
-    getOrder(){
-        return this.client.get('/order');
+    getOrder(user_id){
+        return this.client.get(`/order/admin/all/${user_id}`);
     }
 
     updatePickupDetails(id, details) {

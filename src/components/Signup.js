@@ -1,29 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Button } from "@mui/material";
-import { Grid, Stack, InputLabel, FilledInput, FormHelperText } from '@mui/material';
+import { Button, Select, MenuItem, InputLabel, FilledInput, FormHelperText, Grid, Stack } from "@mui/material";
+import { Steps } from "antd";
+import { CheckCircleOutlined, HourglassOutlined } from "@ant-design/icons";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { CheckCircleOutlined } from "@ant-design/icons";
 import "./Signup.css";
 import onboardGirl from "../assets/onboardgirl.png";
 import logo from "../assets/logo.png";
 import api from "../api"; // Import the API
-import Documents from "./Documents/Documents";
 import ProfileCard from "./Pages/RightSide";
+
+const { Step } = Steps;
 
 const Signup = () => {
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0); // Start with phone number form
-  const [userExists, setUserExists] = useState(true);
+  const [userExists, setUserExists] = useState(null);
   const [userName, setUserName] = useState("");
   const [creditLimit, setCreditLimit] = useState(null);
   const [status, setStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [documentTypes, setDocumentTypes] = useState([]);
+  const [submittedDocuments, setSubmittedDocuments] = useState([]);
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   const step = params.get("step");
-  const prof = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null;
+  const prof = localStorage.getItem("application") ? JSON.parse(localStorage.getItem("application")) : null;
+  const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+    if (token) {
+      localStorage.clear()
+      localStorage.setItem('devicefi_token', token);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     if (step) {
@@ -33,27 +46,55 @@ const Signup = () => {
 
   useEffect(() => {
     fetchUserProfile();
-
-    if (prof?.application?.current_step < 4) {
-      setCurrentStep(2);
-      
+   //fetchDocumentTypes();
+   // fetchSubmittedDocuments();
+    if (prof?.current_step === 4) {
+      setUserExists(true)
+     
+    }else if(prof?.current_step<3&&prof?.current_step!==1){
+    setCurrentStep((2))
     }
   }, [prof]);
 
+  useEffect(() => {
+    fetchDocumentTypes();
+    fetchSubmittedDocuments();
+  }, [userExists]);
+
   const fetchUserProfile = async () => {
     try {
-      const response = await api.user.fetchProfile();
+      const response = await api.user.checkUserExists(user.phone_number);
       const profile = response.data.data;
       localStorage.setItem("profile", JSON.stringify(profile));
       localStorage.setItem("user", JSON.stringify(profile.user));
       localStorage.setItem("application", JSON.stringify(profile.application));
-      if (profile.application.current_step === 4) {
+      if (profile.application.current_step === 3) {
         setCreditLimit(profile.application.credit_limit);
         setStatus(profile.applicationstatus);
-       // navigate("/shop");
+        // navigate("/shop");
       }
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      console.error(error?.response?.data?.message);
+    }
+  };
+
+  const fetchDocumentTypes = async (document=prof?.id) => {
+    try {
+      const response = await api.document.getRequiredDocuments(document);
+      setDocumentTypes(response.data.data);
+    } catch (error) {
+      console.error("Error fetching document types:", error);
+    }
+  };
+
+  const fetchSubmittedDocuments = async () => {
+    try {
+      const response = await api.document.getApplicationDocuments(prof.id);
+      const documents = response.data.data.documents;
+      documents.sort((a, b) => (a.verification_status === "verified" ? -1 : 1));
+      setSubmittedDocuments(documents);
+    } catch (error) {
+      console.error("Error fetching submitted documents:", error);
     }
   };
 
@@ -64,6 +105,8 @@ const Signup = () => {
     email: "",
     address: "",
     city: "",
+    document_type: "",
+    id_number: "",
   };
 
   const validationSchema = Yup.object({
@@ -75,69 +118,129 @@ const Signup = () => {
     city: Yup.string().required("Town/City is required"),
   });
 
-  const handlePhoneSubmit = async (values, { setSubmitting }) => {
+  const handlePhoneSubmit = async (values) => {
     try {
-      const response = await api.user.checkUserExists({ phone_number: values.phone_number });
-      if (response.data.exists) {
+      const response = await api.user.checkUserExists(values.phone_number);
+      if (response.data.data.user) {
         setUserExists(true);
-        setUserName(response.data.user.name);
+        setUserName(response.data.data.user.first_name);
+        localStorage.setItem('user', JSON.stringify(response.data.data.user))
+        localStorage.setItem('application', JSON.stringify(response.data.data.application))
       } else {
+        setUserExists(false);
         setCurrentStep(1);
       }
     } catch (error) {
       console.error("Error checking user:", error);
-      setErrorMessage("Error checking user. Please try again.");
-    } finally {
-      setSubmitting(false);
+      if (error?.response?.data?.message === "User not found") {
+        setUserExists(false);
+      }
+      setErrorMessage(error?.response?.data?.message);
     }
   };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values) => {
     try {
+      delete values.document_type
+      delete values.id_number
       const response = await api.user.createUser(values);
       const { user, token, application } = response.data.data;
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("devicefi_token", token);
-      localStorage.setItem("application", JSON.stringify(application));
       fetchUserProfile();
+      fetchDocumentTypes(application.id)
       setCurrentStep(2);
+      localStorage.setItem("user", JSON.stringify(user));
+      // localStorage.setItem("devicefi_token", token);
+      localStorage.setItem("application", JSON.stringify(application));
+      
     } catch (error) {
       console.error("Registration error:", error);
-      setErrorMessage(error.response.data.errors);
-    } finally {
-      setSubmitting(false);
+      setErrorMessage(error?.response?.data?.errors);
+    }
+  };
+
+  const handleDocumentSubmit = async (values) => {
+    if (submittedDocuments.some(doc => doc.verification_status === "verified")) {
+      setCurrentStep(3);
+      return
+    } else {
+      setCurrentStep(2);
+    }
+    try {
+      const response = await api.document.submitSingleDocument({
+        document_type: values.document_type,
+        id_number: values.id_number,
+        user_id: user.id,
+        application_id: prof.id
+      });
+      fetchSubmittedDocuments();
+      
+    } catch (error) {
+      console.error("Error submitting document:", error);
+      setErrorMessage(error?.response?.data?.message);
+    }
+  };
+
+  const handleContinueClick = (values) => {
+    if (userExists === null) {
+      handlePhoneSubmit(values);
+    } else if (userExists === false) {
+      setCurrentStep(1);
+    } else if (userExists === true) {
+      setCurrentStep(2);
     }
   };
 
   return (
     <div className="page-layout">
-      <div style={{ direction: "rtl", width: "60%", display: "flex", justifyContent: "center", alignItems:"center" }} className="main-content">
+      <div style={{ direction: "rtl", width: "60%", display: "flex", justifyContent: "center", alignItems: "center" }} className="main-content">
         <div style={{ direction: "ltr", marginLeft: "0 auto" }}>
-        {currentStep !==0  && <img src={logo} alt="Logo" className="logo mb-4" /> }
-          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={currentStep === 0 ? handlePhoneSubmit : handleSubmit}>
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-              <form className="form-width" onSubmit={handleSubmit} style={{ padding: "20px" }}>
+          {currentStep !== 0 && <img src={logo} alt="Logo" className="logo mb-4" />}
+          <Formik initialValues={initialValues} validationSchema={validationSchema}>
+            {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
+              <form className="form-width" style={{ padding: "20px" }}>
                 {currentStep === 0 && (
                   <>
-                    {userExists===true && <h3>Welcome back, {userName}!</h3>}
+                    {userExists === true && <div style={{backgroundColor: '#F5F9FF',
+  borderRadius: '12px',
+  boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1)', // Reduced elevation
+  padding: '20px',
+  margin: '5px 0'}}>
+                      <div style={headingStyle}>
+          <div style={profileImageStyle}>{user?.first_name.slice(0,1)}{user?.last_name.slice(0,1)}</div>
+          <span>{user?.first_name} {user?.last_name}</span>
+          
+        </div><div style={{justifySelf:"center"}}>{user?.phone_number.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1-$2-$3-$4")}</div></div>}
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
-                        {userExists===null && <div>
-                        <h2>Customer Identity</h2>
-                        <p style={{fontSize:"14px", marginBottom:"20px"}}>Enter Customer phone number to know it its a returning or new customer.</p>
-                
-                        </div>}
-                        {userExists===false &&  <div>
-                        <h2>New Customer</h2>
-                        <p style={{fontSize:"14px", marginBottom:"20px"}}>The customer appears to be new on our platform.</p>
-                
-                        </div>}
-                               <Stack spacing={1}>
+                        {userExists === null && (
+                          <div>
+                            <h2>Customer Identity</h2>
+                            <p style={{ fontSize: "14px", marginBottom: "20px" }}>Enter Customer phone number to know if it's a returning or new customer.</p>
+                          </div>
+                        )}
+                        {userExists === false && (
+                          <div>
+                            <h2>New Customer</h2>
+                            <p style={{ fontSize: "14px", marginBottom: "20px" }}>The customer appears to be new on our platform.</p>
+                            <div style={{backgroundColor: '#F5F9FF',
+  borderRadius: '12px',
+  boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1)', // Reduced elevation
+  padding: '10px',
+  margin: '5px 0'}}>
+                      <div style={headingStyle}>
+          
+        
+          
+        </div><div style={{justifySelf:"center"}}>{values?.phone_number.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1-$2-$3-$4")}</div></div>
+                          </div>
+                        )}
+                         {(userExists !== false && userExists !==true) && (<Stack spacing={1}>
                           <InputLabel htmlFor="phone_number">Phone Number*</InputLabel>
+                          
                           <FilledInput
                             id="phone_number"
                             type="text"
-                            value={values.phone_number}
+                            value={values.phone_number||user?.phone_number}
                             name="phone_number"
                             onBlur={handleBlur}
                             onChange={handleChange}
@@ -150,24 +253,24 @@ const Signup = () => {
                           {touched.phone_number && errors.phone_number && (
                             <FormHelperText error>{errors.phone_number}</FormHelperText>
                           )}
-                        </Stack>
+                        </Stack>)}
                       </Grid>
                       <Grid item xs={12}>
-                        <Button
+                      {userExists !== true &&    <Button
                           disableElevation
                           disabled={isSubmitting}
                           fullWidth
                           size="large"
-                          type="submit"
                           variant="contained"
                           color="primary"
                           className="submit-button"
+                          onClick={() => handleContinueClick(values)}
                         >
                           Continue
-                        </Button>
+                        </Button>}
                       </Grid>
                     </Grid>
-                    {userExists && (
+                    {userExists && currentStep === 0 && (
                       <Button
                         disableElevation
                         fullWidth
@@ -181,12 +284,21 @@ const Signup = () => {
                         Continue to Platform
                       </Button>
                     )}
-                    {errorMessage && <div className="error-message-signup">{errorMessage}</div>}
+                  
                   </>
                 )}
 
                 {currentStep === 1 && (
                   <>
+                  <h4>New Customer Registration</h4>
+                  <div>
+                  <Steps progressDot size='default' style={{marginBottom:"10px",marginLeft:"-60px", width:"100% !important"}} current={0}>
+                      <Step />
+                      <Step />
+                      <Step />
+                    </Steps>
+                  </div>
+                  
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         <Stack spacing={1}>
@@ -326,37 +438,134 @@ const Signup = () => {
                           disabled={isSubmitting}
                           fullWidth
                           size="large"
-                          type="submit"
                           variant="contained"
                           color="primary"
+                          style={{marginTop:"10px"}}
                           className="submit-button"
+                          onClick={() => handleSubmit(values)}
                         >
                           Continue
                         </Button>
                       </Grid>
                     </Grid>
-                    {errorMessage && <div className="error-message-signup">{errorMessage}</div>}
-                    <div className="login-link">
-                      Already have an account? <Link to="/login">Login</Link>
-                    </div>
+                    
                   </>
                 )}
 
                 {currentStep === 2 && (
                   <>
-                    <h1>ID Verification</h1>
-                    <p>You can proceed with additional details here.</p>
-                    <Documents applicationId={prof?.application?.id} />
+                    <h1>Onboarding</h1>
+                    <Steps current={1}>
+                      <Step />
+                      <Step />
+                      <Step />
+                    </Steps>
+                    <Grid container spacing={2} style={{ marginTop: "20px" }}>
+                      <Grid item xs={12}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="document_type">Document Type</InputLabel>
+                          <Select
+                            id="document_type"
+                            name="document_type"
+                            value={values.document_type}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            fullWidth
+                            error={Boolean(touched.document_type && errors.document_type)}
+                            className="input-field"
+                            disableUnderline={true}
+                            style={{ border: "none", height: "35px", width: "100%" }}
+                          >
+                            {documentTypes.map((docType) => (
+                              <MenuItem key={docType} value={docType.document_type}>
+                                {docType.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {touched.document_type && errors.document_type && (
+                            <FormHelperText error>{errors.document_type}</FormHelperText>
+                          )}
+                        </Stack>
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="id_number">ID Verification Number</InputLabel>
+                          <FilledInput
+                            id="id_number"
+                            type="text"
+                            value={values.id_number}
+                            name="id_number"
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            fullWidth
+                            error={Boolean(touched.id_number && errors.id_number)}
+                            className="input-field"
+                            disableUnderline={true}
+                            style={{ border: "none", height: "35px", width: "100%" }}
+                          />
+                          {touched.id_number && errors.id_number && (
+                            <FormHelperText error>{errors.id_number}</FormHelperText>
+                          )}
+                        </Stack>
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <div
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "150px",
+                            width: "100%",
+                            marginTop:"10px",
+                            padding: "20px",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          {submittedDocuments.length > 0 ? (
+                            submittedDocuments.map((doc, index) => (
+                              <div key={index} style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+                                {doc.verification_status === "verified" ? (
+                                  <div> {index + 1}. {doc.requirement.name} <CheckCircleOutlined style={{ color: "green", fontSize: "24px", marginRight: "10px" }} /> </div>
+                                ) : (
+                                  <div> {index + 1}. {doc.requirement.name} <HourglassOutlined style={{ color: "orange", fontSize: "24px", marginRight: "10px" }} /> </div>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <span>Verification check</span>
+                          )}
+                        </div>
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <Button
+                          disableElevation
+                          disabled={isSubmitting}
+                          fullWidth
+                          size="large"
+                          variant="contained"
+                          color="primary"
+                          className="submit-button"
+                          onClick={() => handleDocumentSubmit(values)}
+                        >
+                          Continue
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  
                   </>
                 )}
 
                 {currentStep === 3 && (
                   <div style={styles.container}>
+                    
                     <CheckCircleOutlined style={styles.icon} />
-                    <h1 style={styles.heading}>Account Created</h1>
-                    <p style={styles.subtext}>Congratulations! You are eligible to buy products below</p>
+                    <h3 style={styles.heading}>Congratulations!</h3>
+                    <p style={styles.subtext}>You are eligible to buy products below</p>
                     <div style={styles.amountBox}>
-                      <span style={styles.amount}>#{creditLimit}</span>
+                      <span style={styles.amount}>#{user?.credit_limit}</span>
                     </div>
                     <Button type="primary" onClick={() => navigate("/shop")} style={styles.button}>
                       Explore Product
@@ -369,14 +578,69 @@ const Signup = () => {
         </div>
       </div>
       <div style={{ width: "40%" }} className="right-section">
-        <ProfileCard />
+        <ProfileCard check ={currentStep} />
       </div>
     </div>
   );
 };
 
 export default Signup;
+const containerStyle = {
+  fontFamily: 'Inter, sans-serif',
+  padding: '20px',
+  borderRadius: '12px',
+  maxWidth: '400px',
+  display:"flex",
+  justifyContent:"center",
+  
+  flexDirection:"column",
+  height: '100vh', // Ensure everything is visible within 100vh
+  overflowY: 'hidden', // Add scroll if content overflows
+};
 
+const headingStyle = {
+  fontFamily: 'Inter, sans-serif',
+  fontSize: '18px',
+  fontWeight: '600',
+  marginBottom: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+  
+};
+
+const subHeadingStyle = {
+  fontSize: '14px',
+  fontWeight: '600',
+  color: '#0165F2',
+};
+
+const textStyle = {
+  fontSize: '14px',
+  color: '#333333',
+  margin: '5px 0',
+};
+
+const verifiedStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  fontSize: '14px',
+  color: '#28a745',
+  fontWeight: '500',
+};
+
+const profileImageStyle = {
+  width: '40px',
+  height: '40px',
+  borderRadius: '50%',
+  backgroundColor: '#007bff',
+  color: '#ffffff',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontWeight: '600',
+  fontSize: '16px',
+};
 const styles = {
   container: {
     display: "flex",
@@ -397,6 +661,7 @@ const styles = {
     fontWeight: "bold",
     marginBottom: "8px",
     color: "#000",
+    lineHeight:"30px", 
   },
   subtext: {
     fontSize: "16px",

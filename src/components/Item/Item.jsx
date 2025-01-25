@@ -39,7 +39,7 @@ const ItemDetails = ({ item, phone, user }) => {
   const handleAddToCart = async () => {
      
       try {
-        await api.cart.createCart({ device_id: product.id, quantity:1, selected_months: 6 });
+        await api.cart.createCart({ user_id:user?.id, device_id: product.id, quantity:1, selected_months: 6 });
         navigate("/cart");
       } catch (error) {
         console.log(error.response?.data?.message||error.response?.message);

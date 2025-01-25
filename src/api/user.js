@@ -4,7 +4,7 @@ export default class User {
     }
   
     createUser(payload) {
-      return this.client.post('/user/register', payload);
+      return this.client.post('/onboarding/in-store/register', payload);
     }
   
     updateUser(payload) {
