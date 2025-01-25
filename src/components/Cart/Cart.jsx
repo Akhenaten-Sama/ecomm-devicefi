@@ -87,10 +87,10 @@ const Cart = () => {
                   className="product-image"
                 />
               </div>
-              <span className="product-name">{item.DeviceCatalog.name}</span>
+              <span className="product-name-cart">{item.DeviceCatalog.name}</span>
             </div>
-            <div className="price">₦{item.DeviceCatalog.price}</div>
-            <div className="subtotal">₦{item.DeviceCatalog.price * item.quantity}</div>
+            <div className="price">R{item.DeviceCatalog.price}</div>
+            <div className="subtotal">R{item.DeviceCatalog.price * item.quantity}</div>
           </div>
         ))}
       </div>
@@ -105,7 +105,7 @@ const Cart = () => {
         <h3>Cart Total</h3>
         <div className="summary-item">
           <span>Subtotal:</span>
-          <span>₦{cartItems.total_amount}</span>
+          <span>R{cartItems.total_amount}</span>
         </div>
         <div className="summary-item">
           <span>Shipping:</span>
@@ -113,7 +113,7 @@ const Cart = () => {
         </div>
         <div className="summary-item total">
           <span>Total:</span>
-          <span>₦{cartItems.total_amount}</span>
+          <span>R{cartItems.total_amount}</span>
         </div>
         <button className="confirm-button cart-button" onClick={handleConfirmOrder}>Confirm Order</button>
       </div>
