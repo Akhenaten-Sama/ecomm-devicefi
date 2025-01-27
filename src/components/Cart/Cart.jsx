@@ -99,6 +99,53 @@ const Cart = () => {
       <div className="return-to-shop">
         <button className="return-button" onClick={() => navigate("/shop")}>Return To Shop</button>
       </div>
+      
+
+      <div className="payment-method">
+        
+        <h3>Choose a Payment Method</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Lender Name</th>
+              <th>Duration</th>
+              <th>Amount</th>
+              <th>Interest</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Easy Buy</td>
+              <td>
+                <select>
+                  <option>6 months</option>
+                  <option>12 months</option>
+                </select>
+              </td>
+              <td className="amount">₦200,000 / per month</td>
+              <td>5%</td>
+              <td>
+                <button disabled className="add-to-cart">Selected</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Wema Bank</td>
+              <td>
+                <select>
+                  <option>6 months</option>
+                  <option>12 months</option>
+                </select>
+              </td>
+              <td className="amount">₦200,000 / per month</td>
+              <td>4.5%</td>
+              <td>
+                <button disabled  className="add-to-cart">Choose</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       {/* Cart Total Section */}
       <div className="cart-total">

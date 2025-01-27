@@ -27,7 +27,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   const step = params.get("step");
-  const prof = localStorage.getItem("application") ? JSON.parse(localStorage.getItem("application")) : null;
+  const prof = (localStorage.getItem("application") && localStorage.getItem('application') !== undefined) ? JSON.parse(localStorage.getItem("application")) : null;
   const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
 
   useEffect(() => {
