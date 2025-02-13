@@ -6,12 +6,21 @@ import emptyCartImage from "../../assets/empty.png"; // Import the empty cart im
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [lenders, setLenders] = useState([]);
+  const [chosenTenure, setChosenTenure] = useState(null);
   const navigate = useNavigate();
 
-  const user = localStorage.getItem('user')? JSON.parse(localStorage.getItem("user")):null
+  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem("user")) : null;
+
   useEffect(() => {
     fetchCartItems();
   }, []);
+
+  useEffect(() => {
+    if (cartItems.amount) {
+      fetchLenders();
+    }
+  }, [cartItems]);
 
   const fetchCartItems = async () => {
     try {
@@ -22,9 +31,18 @@ const Cart = () => {
     }
   };
 
+  const fetchLenders = async () => {
+    try {
+      const response = await api.lender.getAvailableLender(cartItems.amount);
+      setLenders(response.data.data);
+    } catch (error) {
+      console.error("Error fetching lenders:", error);
+    }
+  };
+
   const handleRemoveItem = async (id) => {
     try {
-      await api.cart.removeCartItem(id,user?.id);
+      await api.cart.removeCartItem(id, user?.id);
       fetchCartItems(user?.id);
     } catch (error) {
       console.error("Error removing cart item:", error);
@@ -42,14 +60,28 @@ const Cart = () => {
 
   const handleConfirmOrder = async () => {
     try {
-      const response = await api.cart.selectLender(user.id);
+      const response = await api.cart.selectLender({...chosenTenure, user_id: user?.id});
       if (response.data) {
-        await api.orders.createOrder({user_id:user?.id, cart_id: cartItems.id });
+        await api.orders.createOrder({ user_id: user?.id, cart_id: cartItems.id });
         navigate("/checkout");
       }
     } catch (error) {
       console.error("Error creating order:", error);
     }
+  };
+
+  const handleTenureChange = (lender, tenure) => {
+    setChosenTenure({
+      lender_id: lender.id,
+      lenders_name: lender.lenders_name,
+      tenure_id: tenure.id,
+      tenure_type: tenure.tenure_type,
+      tenure_type_value: tenure.tenure_type_value,
+      tenure_rate_type: tenure.tenure_rate_type,
+      max_loan_amount: tenure.max_loan_amount,
+      min_loan_amount: tenure.min_loan_amount,
+      tenure_rate_type_value: tenure.tenure_rate_type_value,
+    });
   };
 
   if (!cartItems?.items?.length) {
@@ -99,50 +131,44 @@ const Cart = () => {
       <div className="return-to-shop">
         <button className="return-button" onClick={() => navigate("/shop")}>Return To Shop</button>
       </div>
-      
 
+      {/* Payment Method */}
       <div className="payment-method">
-        
-        <h3>Choose a Payment Method</h3>
+        <h3>Choose a Lender</h3>
         <table>
           <thead>
             <tr>
               <th>Lender Name</th>
               <th>Duration</th>
-              <th>Amount</th>
+              <th>Min Loan Value</th>
+              <th>Max Loan Value</th>
               <th>Interest</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Easy Buy</td>
-              <td>
-                <select>
-                  <option>6 months</option>
-                  <option>12 months</option>
-                </select>
-              </td>
-              <td className="amount">₦200,000 / per month</td>
-              <td>5%</td>
-              <td>
-                <button disabled className="add-to-cart">Selected</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Wema Bank</td>
-              <td>
-                <select>
-                  <option>6 months</option>
-                  <option>12 months</option>
-                </select>
-              </td>
-              <td className="amount">₦200,000 / per month</td>
-              <td>4.5%</td>
-              <td>
-                <button disabled  className="add-to-cart">Choose</button>
-              </td>
-            </tr>
+          {lenders.map((lender) => (
+              <tr key={lender.id}>
+                <td>{lender.lenders_name}</td>
+                <td>
+                  <select onChange={(e) => handleTenureChange(lender, lender.tenure[e.target.value])}>
+                    {lender.tenure.map((tenure, index) => (
+                      <option key={tenure.id} value={index}>
+                        {tenure.tenure_type_value} {tenure.tenure_type}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td className="amount">R{chosenTenure?.lender_id === lender.id ? chosenTenure.min_loan_amount: lender.tenure[0].min_loan_amount}</td>
+                <td className="amount">R{chosenTenure?.lender_id === lender.id ? chosenTenure.max_loan_amount: lender.tenure[0].max_loan_amount} </td>
+                <td>{chosenTenure?.lender_id === lender.id ? chosenTenure.tenure_rate_type_value : lender.tenure[0].tenure_rate_type_value}%</td>
+                <td>
+                  <button className="add-to-cart" disabled={chosenTenure?.lender_id === lender.id} onClick={() => handleTenureChange(lender, lender.tenure[0])}>
+                    {chosenTenure?.lender_id === lender.id ? "Selected" : "Choose"}
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

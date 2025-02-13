@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Item.css"; // Import the CSS for styling
 import altphone from "../../assets/phone.png"; // Import the phone image
 import api from "../../api";
+import { message } from "antd";
 
 const paymentPlans = [
   {
@@ -18,8 +19,10 @@ const paymentPlans = [
     "monthly_payment": 3000
   }
 ]
+
 const ItemDetails = ({ item, phone, user }) => {
    const [product, setProduct] = useState(null);
+   const [lenders, setLenders] = useState([]);
    const [loading, setLoading] = useState(true);
      const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -29,6 +32,12 @@ const ItemDetails = ({ item, phone, user }) => {
       fetchProductDetails();
     }, [item.id]);
   
+    useEffect(() => {
+      if (item.price) {
+        fetchLenders();
+      }
+    }, [item.price]);
+
     const fetchProductDetails = async () => {
       setLoading(true);
       try {
@@ -41,7 +50,14 @@ const ItemDetails = ({ item, phone, user }) => {
       }
     };
 
-
+     const fetchLenders = async () => {
+         try {
+           const response = await api.lender.getAvailableLender(item.price);
+           setLenders(response.data.data);
+         } catch (error) {
+           console.error("Error fetching lenders:", error);
+         }
+       };
   
   const handlePlaceOrder = () => {
     if(user){
@@ -51,6 +67,7 @@ const ItemDetails = ({ item, phone, user }) => {
     }
   };
 
+   
   const handleAddToCart = async () => {
      
       try {
@@ -60,7 +77,7 @@ const ItemDetails = ({ item, phone, user }) => {
         console.log(error.response?.data?.message||error.response?.message);
        
         setErrorMessage("This product is out of stock.");
-     
+       message.error(error.response?.data?.message||error.response?.message);
         console.error("Error adding to cart:", error);
       }
     }
@@ -81,11 +98,11 @@ const ItemDetails = ({ item, phone, user }) => {
           <span>Payments</span>
         </div>
         <hr />
-        {paymentPlans.map((p, index) => (
+        {lenders[0]?.tenure?.slice(0,3).map((p, index) => (
           <div key={index} >
             <div className="payment-plan">
-              <span>{p.months} month payments:</span>
-              <span>R{p.monthly_payment}</span>
+              <span>{p.tenure_type_value} {p.tenure_type} payments:</span>
+              <span>R{p.max_loan_amount}</span>
             </div>
             {index < paymentPlans.length - 1 && <hr />}
           </div>

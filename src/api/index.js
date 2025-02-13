@@ -5,6 +5,7 @@ import User from "./user";
 import Catalog from "./catalog";
 import Documents from "./documents";
 import Orders from "./orders";
+import Lender from "./tenure";
 
 export const checkValidTime = (date) => {
   if (!date) return;
@@ -16,8 +17,9 @@ export const checkValidTime = (date) => {
 };
 
 const baseUrl = "https://ecomm.devicefi.com/api/v1/";
+const lenderUrl = "https://lending.devicefi.com/api/v1/";
 
-
+const lenderAxiosInstance = axios.create({baseURL: `${lenderUrl}`});
 const coreAxiosInstance = axios.create({
   baseURL: `${baseUrl}`,
 });
@@ -25,6 +27,16 @@ const coreAxiosInstance = axios.create({
 
 
 coreAxiosInstance.interceptors.request.use(async (request) => {
+  
+  const token = localStorage.getItem("devicefi_token");
+  if (token) {
+    request.headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return request;
+});
+
+lenderAxiosInstance.interceptors.request.use(async (request) => {
   
   const token = localStorage.getItem("devicefi_token");
   if (token) {
@@ -56,4 +68,5 @@ export default {
   catalog: new Catalog(coreAxiosInstance),
   document: new Documents(coreAxiosInstance),
   orders: new Orders(coreAxiosInstance),
+  lender : new Lender(lenderAxiosInstance),
 };

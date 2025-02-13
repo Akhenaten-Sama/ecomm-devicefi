@@ -26,10 +26,14 @@ export default class Cart {
         return this.client.delete(`/cart/admin/${user_id}`);
     }
 
-    selectLender(user_id){
-        return this.client.post(`/cart/lender/admin/${user_id}`, {
-            lender_id: "146893ad-e48a-40df-b6d8-ac464c57992f",
-            lending_period: 12,
+    selectLender(body){
+        console.log(body)
+        const userId = body.user_id
+        delete body.min_loan_amount 
+        delete body.max_loan_amount
+        delete body.user_id
+        return this.client.post(`/cart/lender/admin/${userId}`, {
+            ...body
         })
     }
 

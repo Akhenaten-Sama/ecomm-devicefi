@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ItemDetails from "../Item/Item.jsx"; // Import your item component
-import { Tabs, Skeleton } from "antd";
+import { Tabs, Skeleton, message } from "antd";
 import "./ItemsDisplay.css"; // CSS file for styling
 import api from "../../api"; // Import the API
 import emptyStateImage from "../../assets/empty.png"; // Import the empty state image
@@ -16,9 +16,11 @@ const ItemsDisplay = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    emptyCart();
     fetchCategories();
     fetchItems("all"); // Fetch all devices by default
   }, []);
+
 
   const fetchCategories = async () => {
     try {
@@ -46,7 +48,17 @@ const ItemsDisplay = () => {
       setLoading(false);
     }
   };
-
+const emptyCart = async() => {   
+    
+    try {
+      await api.cart.emptyCart(user?.id)
+      message.success("Cart emptied successfully");
+    } catch (error) {
+      console.log(error.response?.data?.message||error.response?.message);
+      console.error("Error adding to cart:", error);
+    }
+    
+    }; 
   const handleCategoryChange = (key) => {
     setSelectedCategory(key);
     fetchItems(key);
