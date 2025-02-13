@@ -68,7 +68,10 @@ const Signup = () => {
       const profile = response.data.data;
       localStorage.setItem("profile", JSON.stringify(profile));
       localStorage.setItem("user", JSON.stringify(profile.user));
-      localStorage.setItem("application", JSON.stringify(profile.application));
+      if(profile.application){
+        localStorage.setItem("application", JSON.stringify(profile.application));
+      }
+     
       if (profile.application.current_step === 3) {
         setCreditLimit(profile.application.credit_limit);
         setStatus(profile.applicationstatus);
@@ -126,7 +129,11 @@ const Signup = () => {
         setUserExists(true);
         setUserName(response.data.data.user.first_name);
         localStorage.setItem('user', JSON.stringify(response.data.data.user))
-        localStorage.setItem('application', JSON.stringify(response.data.data.application))
+
+        if(response.data.data.application){
+            localStorage.setItem('application', JSON.stringify(response.data.data.application))
+        }
+     
       } else {
         setUserExists(false);
         setCurrentStep(1);

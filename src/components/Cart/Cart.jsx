@@ -70,6 +70,18 @@ const Cart = () => {
     }
   };
 
+  const calculateInterest = ( tenure) => { 
+
+    if(!tenure||!cartItems.amount){
+      return
+    }
+const interest = cartItems.amount * (tenure.tenure_rate_type_value /100);
+const TotalPayable = Math.ceil(interest + cartItems.amount)
+const totalMonthlyPayment = `${Math.ceil(TotalPayable / tenure.tenure_type_value)} / ${tenure.tenure_type}`.replace('s', '');
+
+return {interest, TotalPayable, totalMonthlyPayment}
+
+  }
   const handleTenureChange = (lender, tenure) => {
     setChosenTenure({
       lender_id: lender.id,
@@ -140,8 +152,8 @@ const Cart = () => {
             <tr>
               <th>Lender Name</th>
               <th>Duration</th>
-              <th>Min Loan Value</th>
-              <th>Max Loan Value</th>
+              <th>Total Amount</th>
+              <th>Payment Plan</th>
               <th>Interest</th>
               <th></th>
             </tr>
@@ -159,8 +171,8 @@ const Cart = () => {
                     ))}
                   </select>
                 </td>
-                <td className="amount">R{chosenTenure?.lender_id === lender.id ? chosenTenure.min_loan_amount: lender.tenure[0].min_loan_amount}</td>
-                <td className="amount">R{chosenTenure?.lender_id === lender.id ? chosenTenure.max_loan_amount: lender.tenure[0].max_loan_amount} </td>
+                <td className="amount">R{chosenTenure?.lender_id === lender.id ? calculateInterest(chosenTenure).TotalPayable: calculateInterest(lender.tenure[0]).TotalPayable}</td>
+                <td className="amount">R{chosenTenure?.lender_id === lender.id ? calculateInterest(chosenTenure).totalMonthlyPayment: calculateInterest(lender.tenure[0]).totalMonthlyPayment} </td>
                 <td>{chosenTenure?.lender_id === lender.id ? chosenTenure.tenure_rate_type_value : lender.tenure[0].tenure_rate_type_value}%</td>
                 <td>
                   <button className="add-to-cart" disabled={chosenTenure?.lender_id === lender.id} onClick={() => handleTenureChange(lender, lender.tenure[0])}>
@@ -178,7 +190,7 @@ const Cart = () => {
         <h3>Cart Total</h3>
         <div className="summary-item">
           <span>Subtotal:</span>
-          <span>R{cartItems.total_amount}</span>
+          <span>R{calculateInterest(chosenTenure)?.TotalPayable||" 0.00"}</span>
         </div>
         <div className="summary-item">
           <span>Shipping:</span>
@@ -186,7 +198,7 @@ const Cart = () => {
         </div>
         <div className="summary-item total">
           <span>Total:</span>
-          <span>R{cartItems.total_amount}</span>
+          <span>R{calculateInterest(chosenTenure)?.TotalPayable||" 0.00"}</span>
         </div>
         <button className="confirm-button cart-button" onClick={handleConfirmOrder}>Confirm Order</button>
       </div>
