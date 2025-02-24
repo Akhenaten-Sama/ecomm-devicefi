@@ -70,20 +70,19 @@ const Cart = () => {
     }
   };
 
-  const calculateInterest = ( tenure) => { 
-
-    if(!tenure||!cartItems.amount){
-      return
+  const calculateInterest = (tenure) => { 
+    if (!tenure || !cartItems.amount) {
+      return;
     }
-const interest = cartItems.amount * (tenure.tenure_rate_type_value /100);
-const TotalPayable = Math.ceil(interest + cartItems.amount)
-const totalMonthlyPayment = `${Math.ceil(TotalPayable / tenure.tenure_type_value)} / ${tenure.tenure_type}`.replace('s', '');
+    const interest = cartItems.amount * (tenure.tenure_rate_type_value / 100);
+    const TotalPayable = Math.ceil(interest + cartItems.amount);
+    const totalMonthlyPayment = `${Math.ceil(TotalPayable / tenure.tenure_type_value)} / ${tenure.tenure_type}`.replace('s', '');
 
-return {interest, TotalPayable, totalMonthlyPayment}
+    return { interest, TotalPayable, totalMonthlyPayment };
+  };
 
-  }
   const handleTenureChange = (lender, tenure) => {
-    setChosenTenure({
+    const selectedTenure = {
       lender_id: lender.id,
       lenders_name: lender.lenders_name,
       tenure_id: tenure.id,
@@ -93,7 +92,9 @@ return {interest, TotalPayable, totalMonthlyPayment}
       max_loan_amount: tenure.max_loan_amount,
       min_loan_amount: tenure.min_loan_amount,
       tenure_rate_type_value: tenure.tenure_rate_type_value,
-    });
+    };
+    setChosenTenure(selectedTenure);
+    localStorage.setItem('chosenTenure', JSON.stringify({amount:cartItems.amount, ...selectedTenure}));
   };
 
   if (!cartItems?.items?.length) {

@@ -614,7 +614,7 @@ const Signup = () => {
 
                 {currentStep === 3 && (
                   <div style={styles.container}>
-                       { user?.credit_approved?<div>
+                       { user?.credit_approved?<div style={styles.container}>
                         <CheckCircleOutlined style={styles.icon} />
                     <h3 style={styles.heading}>Congratulations!</h3>
                     <p style={styles.subtext}>You are eligible to buy products worth</p>
@@ -623,7 +623,7 @@ const Signup = () => {
                     </div>
                     <Button type="primary" onClick={() => navigate("/shop")} style={styles.button}>
                       Explore Product
-                    </Button></div>:<div>
+                    </Button></div>:<div style={styles.container}>
                     {/* <CloseOutlined style={{...styles.icon,color:"red"}} /> */}
                     <h3 style={styles.heading}>Sorry! {user?.first_name}</h3>
 

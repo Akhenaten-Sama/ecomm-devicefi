@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Logo from "../../assets/blackLogo.png"
 import Placeholder from "../../assets/empty-user.png"
+
 const cardStyle = {
   backgroundColor: '#F5F9FF',
   borderRadius: '12px',
@@ -13,11 +14,9 @@ const containerStyle = {
   fontFamily: 'Inter, sans-serif',
   padding: '20px',
   borderRadius: '12px',
-  
-  display:"flex",
-  justifyContent:"center",
-  
-  flexDirection:"column",
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
   height: '100vh', // Ensure everything is visible within 100vh
   overflowY: 'hidden', // Add scroll if content overflows
 };
@@ -63,23 +62,59 @@ const profileImageStyle = {
   fontWeight: '600',
   fontSize: '16px',
 };
+const calculateInterest = (tenure) => { 
+  if (!tenure || !tenure.amount) {
+    return;
+  }
+  const interest = tenure.amount * (tenure.tenure_rate_type_value / 100);
+  const TotalPayable = Math.ceil(interest + tenure.amount);
+  const totalMonthlyPayment = `${Math.ceil(TotalPayable / tenure.tenure_type_value)} / ${tenure.tenure_type}`.replace('s', '');
 
-const ProfileCard = ({check}) => {
- const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
- 
- console.log(check, 'ydiuwdhiowdodd')
- useEffect(() => { 
+  return { interest, TotalPayable, totalMonthlyPayment };
+};
 
-    console.log(user)
- }, [user]);
- 
- return user? (
+const ProfileCard = ({ check, page }) => {
+  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+  const chosenTenure = localStorage.getItem('chosenTenure') ? JSON.parse(localStorage.getItem('chosenTenure')) : null;
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
+  if (page === 'checkout') {
+    return chosenTenure ? (
+      <div style={containerStyle}>
+        <p style={subHeadingStyle}>Payment Plan Information</p>
+        <div style={cardStyle}>
+          <div style={headingStyle}>
+          
+            <div style={profileImageStyle}>{chosenTenure.lenders_name.slice(0, 1)}</div>
+            <span>{chosenTenure.lenders_name}</span>
+          </div>
+         
+          <div style={textStyle}>Duration: {chosenTenure?.tenure_type_value} {chosenTenure.tenure_type}</div>
+          <div style={textStyle}>Device Amount: R{chosenTenure?.amount}</div>
+          <div style={textStyle}>Total Payments After Interest: R{calculateInterest(chosenTenure).TotalPayable}</div>
+          <div style={textStyle}>Monthly Payment: R{calculateInterest(chosenTenure).totalMonthlyPayment}</div>
+          <div style={textStyle}>Interest Rate: {chosenTenure?.tenure_rate_type_value}%</div>
+        </div>
+      </div>
+    ) : (
+      <div style={containerStyle}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: "100%" }}>
+          <img style={{ justifySelf: "center" }} src={Placeholder} width='200px' />
+          <h6 style={{ marginTop: "20px" }}>No Tenure Details Selected</h6>
+        </div>
+      </div>
+    );
+  }
+
+  return user ? (
     <div style={containerStyle}>
-
       <p style={subHeadingStyle}>Customer Details</p>
       <div style={cardStyle}>
         <div style={headingStyle}>
-          <div style={profileImageStyle}>{user?.first_name.slice(0,1)}{user?.last_name.slice(0,1)}</div>
+          <div style={profileImageStyle}>{user?.first_name.slice(0, 1)}{user?.last_name.slice(0, 1)}</div>
           <span>{user?.first_name} {user?.last_name}</span>
         </div>
         <div style={subHeadingStyle}>Contact Info</div>
@@ -90,11 +125,11 @@ const ProfileCard = ({check}) => {
       <div style={cardStyle}>
         <div style={subHeadingStyle}>Address 1</div>
         <div style={textStyle}>Street: {user?.address}</div>
-        <div style={textStyle}>City:{user?.city}</div>
-        <div style={textStyle}>State/province/area:{user?.state}, {user?.country}</div>
+        <div style={textStyle}>City: {user?.city}</div>
+        <div style={textStyle}>State/province/area: {user?.state}, {user?.country}</div>
       </div>
 
-     {user?.credit_approved && <div style={cardStyle}>
+      {user?.credit_approved && <div style={cardStyle}>
         <div style={subHeadingStyle}>Verification</div>
         <div>
           <span style={textStyle}>
@@ -107,7 +142,7 @@ const ProfileCard = ({check}) => {
       {user?.credit_approved && <div style={cardStyle}>
         <div style={subHeadingStyle}>Credit Check</div>
         <div style={{ ...textStyle, fontWeight: '500' }}>
-          Status: <span style={{ color: '#28a745' }}>{user?.credit_approved?"Eligible":"Not Eligible"}</span>
+          Status: <span style={{ color: '#28a745' }}>{user?.credit_approved ? "Eligible" : "Not Eligible"}</span>
         </div>
       </div>}
 
@@ -116,18 +151,21 @@ const ProfileCard = ({check}) => {
         <div style={{ ...textStyle, fontWeight: '600' }}>Amount: R{user?.credit_limit}</div>
       </div>}
     </div>
-  ): (<div style={containerStyle}>
-
-     {check!==1? <div style={{display:"flex", alignItems:"center", justifyContent:"center", width:"100%"}}>
-        <img width="150px"  src={Logo} />
-      </div>:<div style={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column",width:"100%"}}>
-        
-        <img style={{justifySelf:"center", }}src={Placeholder} width='200px'/>
-        <h6 style={{marginTop:"20px"}}>No Customer Details
-       </h6>
-        <h6> Collected yet</h6>
-        </div>}
-  </div>)
+  ) : (
+    <div style={containerStyle}>
+      {check !== 1 ? (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+          <img width="150px" src={Logo} />
+        </div>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: "100%" }}>
+          <img style={{ justifySelf: "center" }} src={Placeholder} width='200px' />
+          <h6 style={{ marginTop: "20px" }}>No Customer Details</h6>
+          <h6>Collected yet</h6>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ProfileCard;
