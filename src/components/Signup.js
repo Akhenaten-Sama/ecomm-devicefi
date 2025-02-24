@@ -3,7 +3,7 @@ import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Select, MenuItem, InputLabel, FilledInput, FormHelperText, Grid, Stack } from "@mui/material";
 import { Steps } from "antd";
-import { CheckCircleOutlined, HourglassOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined,CloseOutlined, HourglassOutlined } from "@ant-design/icons";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import "./Signup.css";
 import onboardGirl from "../assets/onboardgirl.png";
@@ -614,16 +614,22 @@ const Signup = () => {
 
                 {currentStep === 3 && (
                   <div style={styles.container}>
-
-                    <CheckCircleOutlined style={styles.icon} />
+                       { user?.credit_approved?<div>
+                        <CheckCircleOutlined style={styles.icon} />
                     <h3 style={styles.heading}>Congratulations!</h3>
-                    <p style={styles.subtext}>You are eligible to buy products below</p>
+                    <p style={styles.subtext}>You are eligible to buy products worth</p>
                     <div style={styles.amountBox}>
                       <span style={styles.amount}>R{user?.credit_limit}</span>
                     </div>
                     <Button type="primary" onClick={() => navigate("/shop")} style={styles.button}>
                       Explore Product
-                    </Button>
+                    </Button></div>:<div>
+                    {/* <CloseOutlined style={{...styles.icon,color:"red"}} /> */}
+                    <h3 style={styles.heading}>Sorry! {user?.first_name}</h3>
+
+                    <p style={styles.subtext}>You are not eligible at this time..</p>
+                      </div>}
+                                 
                   </div>
                 )}
               </form>
