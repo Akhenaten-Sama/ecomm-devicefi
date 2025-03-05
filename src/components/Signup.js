@@ -109,6 +109,7 @@ const Signup = () => {
     email: "" || user?.email,
     address: "" || user?.address,
     city: "" || user?.city,
+    country:"" || user?.country,
     document_type: "",
     id_number: "",
   };
@@ -120,6 +121,7 @@ const Signup = () => {
     email: Yup.string().email("Invalid email address").required("Email is required"),
     address: Yup.string().required("Address is required"),
     city: Yup.string().required("Town/City is required"),
+    country: Yup.string().required("Country is required"),
   });
 
   const handlePhoneSubmit = async (values) => {
@@ -175,7 +177,8 @@ const Signup = () => {
     }
     try {
       const response = await api.document.submitSingleDocument({
-        document_type: values.document_type,
+        document_type: "identity",
+        name:values.name,
         id_number: values.id_number,
         user_id: user.id,
         application_id: prof.id
@@ -217,7 +220,7 @@ const Signup = () => {
                       margin: '5px 0', marginBottom: "20px"
                     }}>
                       <div style={{ ...headingStyle, }}>
-                        <div style={profileImageStyle}>{user?.first_name.slice(0, 1)}{user?.last_name.slice(0, 1)}</div>
+                        <div style={profileImageStyle}>{user?.first_name?.slice(0, 1)}{user?.last_name?.slice(0, 1)}</div>
                         <span>{user?.first_name} {user?.last_name}</span>
 
                       </div><div style={{ justifySelf: "center" }}>{user?.phone_number?.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1-$2-$3-$4")}</div></div></div>}
@@ -473,6 +476,35 @@ const Signup = () => {
                           )}
                         </Stack>
                       </Grid>
+                      <Grid item xs={12}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="country">Country</InputLabel>
+                          <Select
+                            id="country"
+                            name="country"
+                            value={values.country}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            fullWidth
+                            error={Boolean(touched.country && errors.country)}
+                            className="input-field"
+                            disableUnderline={true}
+                            style={{ border: "none", height: "35px", width: "100%" }}
+                          >
+                           <MenuItem value="">Choose a country</MenuItem>
+                              <MenuItem value="South Africa">
+                               South Africa
+                              </MenuItem>
+                              <MenuItem  value="Nigeria">
+                               Nigeria
+                              </MenuItem>
+                            
+                          </Select>
+                          {touched.country && errors.country && (
+                            <FormHelperText error>{errors.country}</FormHelperText>
+                          )}
+                        </Stack>
+                      </Grid>
 
                       <Grid item xs={12}>
                         <Button
@@ -505,24 +537,27 @@ const Signup = () => {
                     <Grid container spacing={2} style={{ marginTop: "20px" }}>
                       <Grid item xs={12}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="document_type">Document Type</InputLabel>
+                          <InputLabel htmlFor="name">Document Type</InputLabel>
                           <Select
-                            id="document_type"
-                            name="document_type"
-                            value={values.document_type}
+                            id="name"
+                            name="name"
+                            value={values.name}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             fullWidth
-                            error={Boolean(touched.document_type && errors.document_type)}
+                            error={Boolean(touched.name && errors.name)}
                             className="input-field"
                             disableUnderline={true}
                             style={{ border: "none", height: "35px", width: "100%" }}
                           >
-                            {documentTypes.map((docType) => (
-                              <MenuItem key={docType} value={docType.document_type}>
-                                {docType.name}
+                           
+                              <MenuItem value={"South African ID"}>
+                               South African ID
                               </MenuItem>
-                            ))}
+                              <MenuItem  value={"Nigerian BVN"}>
+                               BVN
+                              </MenuItem>
+                            
                           </Select>
                           {touched.document_type && errors.document_type && (
                             <FormHelperText error>{errors.document_type}</FormHelperText>
@@ -570,9 +605,9 @@ const Signup = () => {
                             submittedDocuments.map((doc, index) => (
                               <div key={index} style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
                                 {doc.verification_status === "verified" ? (
-                                  <div> {index + 1}. {doc.requirement.name} <CheckCircleOutlined style={{ color: "green", fontSize: "24px", marginRight: "10px" }} /> </div>
+                                  <div> {index + 1}. {doc.name} <CheckCircleOutlined style={{ color: "green", fontSize: "24px", marginRight: "10px" }} /> </div>
                                 ) : (
-                                  <div> {index + 1}. {doc.requirement.name} <HourglassOutlined style={{ color: "orange", fontSize: "24px", marginRight: "10px" }} /> </div>
+                                  <div> {index + 1}. {doc.name} <HourglassOutlined style={{ color: "orange", fontSize: "24px", marginRight: "10px" }} /> </div>
                                 )}
                               </div>
                             ))
