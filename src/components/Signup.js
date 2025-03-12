@@ -551,10 +551,10 @@ const Signup = () => {
                             style={{ border: "none", height: "35px", width: "100%" }}
                           >
                            
-                              <MenuItem value={"South African ID"}>
+                              <MenuItem value={"south african id"}>
                                South African ID
                               </MenuItem>
-                              <MenuItem  value={"Nigerian BVN"}>
+                              <MenuItem  value={"bvn"}>
                                BVN
                               </MenuItem>
                             
