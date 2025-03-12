@@ -4,6 +4,7 @@ import "./Item.css"; // Import the CSS for styling
 import altphone from "../../assets/phone.png"; // Import the phone image
 import api from "../../api";
 import { message } from "antd";
+import { calculateInterest } from "../../utils/utils";
 
 const paymentPlans = [
   {
@@ -98,11 +99,11 @@ const ItemDetails = ({ item, phone, user }) => {
           <span>Payments</span>
         </div>
         <hr />
-        {lenders[0]?.tenure?.slice(0,3).map((p, index) => (
+        {lenders[1]?.LendersTenures?.slice(0,3).map((p, index) => (
           <div key={index} >
             <div className="payment-plan">
               <span>{p.tenure_type_value} {p.tenure_type} payments:</span>
-              <span>R{p.max_loan_amount}</span>
+              <span>R{calculateInterest({...p, amount:item.price})?.totalMonthlyPayment}</span>
             </div>
             {index < paymentPlans.length - 1 && <hr />}
           </div>

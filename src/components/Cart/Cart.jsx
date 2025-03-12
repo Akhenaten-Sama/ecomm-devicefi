@@ -84,7 +84,7 @@ const Cart = () => {
   const handleTenureChange = (lender, tenure) => {
     const selectedTenure = {
       lender_id: lender.id,
-      lenders_name: lender.lenders_name,
+      lenders_name: lender.name,
       tenure_id: tenure.id,
       tenure_type: tenure.tenure_type,
       tenure_type_value: tenure.tenure_type_value,
@@ -162,21 +162,21 @@ const Cart = () => {
           <tbody>
           {lenders.map((lender) => (
               <tr key={lender.id}>
-                <td>{lender.lenders_name}</td>
+                <td>{lender.name}</td>
                 <td>
-                  <select onChange={(e) => handleTenureChange(lender, lender.tenure[e.target.value])}>
-                    {lender.tenure.map((tenure, index) => (
+                  <select onChange={(e) => handleTenureChange(lender, lender.LendersTenures[e.target.value])}>
+                    {lender.LendersTenures.map((tenure, index) => (
                       <option key={tenure.id} value={index}>
                         {tenure.tenure_type_value} {tenure.tenure_type}
                       </option>
                     ))}
                   </select>
                 </td>
-                <td className="amount">R{chosenTenure?.lender_id === lender.id ? calculateInterest(chosenTenure).TotalPayable: calculateInterest(lender.tenure[0]).TotalPayable}</td>
-                <td className="amount">R{chosenTenure?.lender_id === lender.id ? calculateInterest(chosenTenure).totalMonthlyPayment: calculateInterest(lender.tenure[0]).totalMonthlyPayment} </td>
-                <td>{chosenTenure?.lender_id === lender.id ? chosenTenure.tenure_rate_type_value : lender.tenure[0].tenure_rate_type_value}%</td>
+                <td className="amount">R{chosenTenure?.lender_id === lender.id ? calculateInterest(chosenTenure).TotalPayable: calculateInterest(lender.LendersTenures[0]).TotalPayable}</td>
+                <td className="amount">R{chosenTenure?.lender_id === lender.id ? calculateInterest(chosenTenure).totalMonthlyPayment: calculateInterest(lender.LendersTenures[0]).totalMonthlyPayment} </td>
+                <td>{chosenTenure?.lender_id === lender.id ? chosenTenure.tenure_rate_type_value : lender.LendersTenures[0].tenure_rate_type_value}%</td>
                 <td>
-                  <button className="add-to-cart" disabled={chosenTenure?.lender_id === lender.id} onClick={() => handleTenureChange(lender, lender.tenure[0])}>
+                  <button className="add-to-cart" disabled={chosenTenure?.lender_id === lender.id} onClick={() => handleTenureChange(lender, lender.LendersTenures[0])}>
                     {chosenTenure?.lender_id === lender.id ? "Selected" : "Choose"}
                   </button>
                 </td>
